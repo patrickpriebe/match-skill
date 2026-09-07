@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm ci",
+  "buildCommand": "node scripts/validate-hosted-env.mjs && npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/((?!api/|api$|assets/).*)", "destination": "/index.html" }
+  ]
+}

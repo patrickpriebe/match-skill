@@ -1,0 +1,17 @@
+[
+  {
+    "input": "<unset>",
+    "exitCode": 1,
+    "stderr": "VITE_API_BASE_URL must be an absolute HTTPS backend URL ending in /api, without credentials, query or fragment. Set this public build variable in the Vercel project."
+  },
+  {
+    "input": "/api",
+    "exitCode": 1,
+    "stderr": "VITE_API_BASE_URL must be an absolute HTTPS backend URL ending in /api, without credentials, query or fragment. Set this public build variable in the Vercel project."
+  },
+  {
+    "input": "https://api.example.test/api",
+    "exitCode": 0,
+    "stderr": ""
+  }
+]

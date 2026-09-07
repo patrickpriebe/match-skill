@@ -1,0 +1,114 @@
+/* ─────────────────────────────────────────────────────────────────────
+   Page-level layout.
+
+   In the HTML prototype these rules lived in a <style> block on each screen.
+   In React the same screen is a component, so they move here — one file, one
+   definition each, and the React output stays visually identical to the
+   approved screens rather than drifting per page.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ─── skill registration ──────────────────────────────────────────── */
+.reg { max-width: 880px; margin-inline: auto; padding: var(--gap-xl) var(--gap-lg); }
+.reg-cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-lg); }
+.reg-note { margin-top: var(--gap-lg); }
+.reg-foot {
+  position: sticky; bottom: 0; margin-top: var(--gap-lg); padding: 14px 0;
+  background: color-mix(in oklch, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px); border-top: 1px solid var(--border);
+}
+
+/* ─── profile ─────────────────────────────────────────────────────── */
+.prof-grid { display: grid; grid-template-columns: 1fr 320px; gap: var(--gap-xl); align-items: start; }
+.fb-row { padding: 16px 0; border-bottom: 1px solid var(--border); }
+.aside-note { margin-top: 16px; }
+
+/* ─── scheduling ──────────────────────────────────────────────────── */
+.sch-grid { display: grid; grid-template-columns: 1fr 336px; gap: var(--gap-xl); align-items: start; }
+.when-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-sm); }
+
+/* ─── exchange details ────────────────────────────────────────────── */
+.ex-grid { display: grid; grid-template-columns: 1fr 300px; gap: var(--gap-xl); align-items: start; }
+.tl { border-top: 1px solid var(--border); }
+.tl-row {
+  display: grid; grid-template-columns: 20px 1fr auto; gap: var(--gap-sm);
+  padding: 13px 0; border-bottom: 1px solid var(--border); align-items: baseline;
+}
+.tl-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--fg); margin-top: 6px; }
+.tl-row.is-next { color: var(--muted); }
+.tl-row.is-next .tl-dot { background: transparent; border: 1.5px dashed var(--muted); }
+.tl-what { font-size: 14px; }
+.tl-who { color: var(--muted); }
+
+/* ─── history ─────────────────────────────────────────────────────── */
+.tally { display: flex; gap: var(--gap-xl); flex-wrap: wrap; padding: var(--gap-md) 0 var(--gap-lg); }
+.tally-n {
+  font-family: var(--font-display); font-size: 40px; line-height: 1;
+  letter-spacing: -0.03em; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.tally-l { font-size: 13px; color: var(--muted); margin-top: 6px; max-width: 22ch; }
+
+/* ─── feedback ────────────────────────────────────────────────────── */
+.fb-wrap { max-width: 620px; }
+.rate { display: flex; gap: 6px; }
+.rate button {
+  width: 46px; height: 46px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--surface);
+  display: grid; place-items: center; color: var(--border);
+}
+.rate button:hover { border-color: var(--muted); background: var(--raised); }
+.rate button.is-lit { color: var(--fg); }
+.rate button[aria-checked='true'] { color: var(--fg); border-color: var(--fg); border-width: 1.5px; }
+.rate-word { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+/* ─── availability ────────────────────────────────────────────────── */
+.av-grid { display: grid; grid-template-columns: 1fr 320px; gap: var(--gap-xl); align-items: start; }
+.tz-field { max-width: 420px; }
+.day { padding: var(--gap-md) 0; border-bottom: 1px solid var(--border); }
+.day-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--gap-sm); margin-bottom: 10px; }
+.day-name { font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.day-empty { color: var(--muted); font-size: 14px; }
+.range { display: grid; grid-template-columns: 1fr 14px 1fr var(--h-md); gap: 8px; align-items: center; }
+.range + .range { margin-top: 8px; }
+.range .sep { text-align: center; color: var(--muted); font-family: var(--font-mono); font-size: 12px; }
+.range .input { min-height: var(--h-sm); padding: 8px 11px; font-size: 14px; }
+.rm {
+  min-height: var(--h-sm); width: var(--h-sm);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); color: var(--muted); display: grid; place-items: center;
+}
+.rm:hover { background: var(--raised); color: var(--fg); border-color: var(--muted); }
+.save-bar {
+  position: sticky; bottom: 0; margin-top: var(--gap-lg); padding: 14px 0;
+  background: color-mix(in oklch, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px); border-top: 1px solid var(--border);
+}
+
+/* ─── search ──────────────────────────────────────────────────────── */
+.quick { display: flex; flex-wrap: wrap; gap: var(--gap-xs); align-items: center; }
+.quick a, .quick button {
+  padding: 5px 11px; border: 1px solid var(--border); border-radius: 999px;
+  font-size: 13px; background: var(--surface); min-height: var(--h-sm);
+  display: inline-flex; align-items: center;
+}
+.quick a:hover, .quick button:hover { background: var(--raised); border-color: var(--muted); }
+
+/* ─── dialog overlay ──────────────────────────────────────────────── */
+.dialog-overlay {
+  position: fixed; inset: 0; z-index: 20; overflow: auto;
+  background: color-mix(in oklch, var(--fg) 30%, transparent);
+  display: grid; place-items: center; padding: var(--gap-md);
+}
+.dialog-note { margin-top: 16px; }
+
+@media (max-width: 920px) {
+  .reg { padding: var(--gap-md); }
+  .reg-cols, .prof-grid, .sch-grid, .ex-grid, .av-grid, .when-row {
+    grid-template-columns: 1fr; gap: var(--gap-lg);
+  }
+  .range { grid-template-columns: 1fr 12px 1fr var(--h-md); }
+  .rm { min-height: var(--h-md); width: var(--h-md); }
+  /* A dialog on a phone is a sheet: full width, anchored to the bottom edge
+     where the thumb already is. */
+  .dialog-overlay { place-items: end stretch; padding: 0; }
+  .dialog-overlay .dialog { max-width: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+}

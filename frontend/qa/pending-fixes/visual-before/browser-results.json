@@ -1,0 +1,388 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Projects\\match-skill\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/pending-fixes.spec.ts"
+    ],
+    "configFile": "C:\\Projects\\match-skill\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Projects/match-skill/frontend/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Projects/match-skill/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Projects/match-skill/frontend/tests",
+        "testIgnore": [
+          "**/live/**"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev -- --host 127.0.0.1 --port 4173 --strictPort",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "pending-fixes.spec.ts",
+      "file": "pending-fixes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "visual closure scroll and hit tests at 375x900",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1692,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60",
+                    "location": {
+                      "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                      "column": 60,
+                      "line": 66
+                    },
+                    "snippet": "  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                        "column": 60,
+                        "line": 66
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-07T17:23:57.866Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJvbmJvYXJkaW5nSW5wdXQiOiB7CiAgICAidG9wIjogNDcyLjEyNSwKICAgICJib3R0b20iOiA1MTcuMzc1LAogICAgImhpdCI6IHRydWUsCiAgICAic2Nyb2xsIjogMzgyLAogICAgIm1heFNjcm9sbCI6IDM4MiwKICAgICJvYnN0cnVjdGlvbiI6ICJJTlBVVC5pbnB1dCIKICB9LAogICJvbmJvYXJkaW5nT3B0aW9uIjogewogICAgInRvcCI6IDUyMi4zNzUsCiAgICAiYm90dG9tIjogNTY2LjM3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDM4MiwKICAgICJtYXhTY3JvbGwiOiAzODIsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmNvbWJvLW9wdCIKICB9LAogICJvbmJvYXJkaW5nRm9vdGVyIjogewogICAgInRvcCI6IDgyMi4wNDY4NzUsCiAgICAiYm90dG9tIjogODY2LjA0Njg3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDM4MiwKICAgICJtYXhTY3JvbGwiOiAzODIsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSIKICB9LAogICIvYXZhaWxhYmlsaXR5IjogewogICAgInRvcCI6IDc3NCwKICAgICJib3R0b20iOiA4MTgsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiAzNDYsCiAgICAibWF4U2Nyb2xsIjogOTU3LAogICAgIm9ic3RydWN0aW9uIjogIkJVVFRPTi5idG4gYnRuLXByaW1hcnkgYnRuLXNtIgogIH0sCiAgIi9hdmFpbGFiaWxpdHk6Ym90dG9tIjogewogICAgImNvbnRlbnRCb3R0b20iOiA4NDMuMTg3NSwKICAgICJuYXZUb3AiOiA4NDMsCiAgICAibmF2UG9zaXRpb24iOiAic3RpY2t5IiwKICAgICJ2aWV3cG9ydCI6IDkwMAogIH0sCiAgIi9mZWVkYmFjay9jb21wbGV0ZWQiOiB7CiAgICAidG9wIjogNzA2LjkwNjI1LAogICAgImJvdHRvbSI6IDc1MC45MDYyNSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDc3LAogICAgIm1heFNjcm9sbCI6IDc3LAogICAgIm9ic3RydWN0aW9uIjogIkEuYnRuIGJ0bi1zZWNvbmRhcnkiCiAgfSwKICAiL2ZlZWRiYWNrL2NvbXBsZXRlZDpib3R0b20iOiB7CiAgICAiY29udGVudEJvdHRvbSI6IDg0My4xODc1LAogICAgIm5hdlRvcCI6IDg0MywKICAgICJuYXZQb3NpdGlvbiI6ICJzdGlja3kiLAogICAgInZpZXdwb3J0IjogOTAwCiAgfSwKICAiL3NjaGVkdWxlZC9hY2NlcHRlZCI6IHsKICAgICJ0b3AiOiA2OTYuODc1LAogICAgImJvdHRvbSI6IDc0MC44NzUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiA2MTksCiAgICAibWF4U2Nyb2xsIjogNjE5LAogICAgIm9ic3RydWN0aW9uIjogIkJVVFRPTi5idG4gYnRuLXF1aWV0IgogIH0sCiAgIi9zY2hlZHVsZWQvYWNjZXB0ZWQ6Ym90dG9tIjogewogICAgImNvbnRlbnRCb3R0b20iOiA4NDMuMjk2ODc1LAogICAgIm5hdlRvcCI6IDg0MywKICAgICJuYXZQb3NpdGlvbiI6ICJzdGlja3kiLAogICAgInZpZXdwb3J0IjogOTAwCiAgfSwKICAiL3Byb2ZpbGUvc2FtIjogewogICAgInRvcCI6IDQyMy4zMTI1LAogICAgImJvdHRvbSI6IDQ3Ny41OTM3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDQxLAogICAgIm1heFNjcm9sbCI6IDcwMiwKICAgICJvYnN0cnVjdGlvbiI6ICJCVVRUT04uYnRuIGJ0bi1wcmltYXJ5IGJ0bi1zbSIKICB9LAogICIvcHJvZmlsZS9zYW06Ym90dG9tIjogewogICAgImNvbnRlbnRCb3R0b20iOiA4NDIuODU5Mzc1LAogICAgIm5hdlRvcCI6IDg0Mi44NTkzNzUsCiAgICAibmF2UG9zaXRpb24iOiAic3RpY2t5IiwKICAgICJ2aWV3cG9ydCI6IDkwMAogIH0sCiAgInRhYiI6IHsKICAgICJnYXAiOiAwLAogICAgImRpc3BsYXkiOiAiYmxvY2siCiAgfQp9"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-375x900\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-375x900\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                    "column": 60,
+                    "line": 66
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2c5b0c750eb75ce3bbfc-d24c2a50d88a005591c1",
+          "file": "pending-fixes.spec.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "visual closure scroll and hit tests at 375x667",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1717,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60",
+                    "location": {
+                      "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                      "column": 60,
+                      "line": 66
+                    },
+                    "snippet": "  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                        "column": 60,
+                        "line": 66
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-07T17:24:00.478Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJvbmJvYXJkaW5nSW5wdXQiOiB7CiAgICAidG9wIjogMzExLjEyNSwKICAgICJib3R0b20iOiAzNTYuMzc1LAogICAgImhpdCI6IHRydWUsCiAgICAic2Nyb2xsIjogNTQzLAogICAgIm1heFNjcm9sbCI6IDYxNSwKICAgICJvYnN0cnVjdGlvbiI6ICJJTlBVVC5pbnB1dCIKICB9LAogICJvbmJvYXJkaW5nT3B0aW9uIjogewogICAgInRvcCI6IDMxMS4zNzUsCiAgICAiYm90dG9tIjogMzU1LjM3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDU5MywKICAgICJtYXhTY3JvbGwiOiA2MTUsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmNvbWJvLW9wdCIKICB9LAogICJvbmJvYXJkaW5nRm9vdGVyIjogewogICAgInRvcCI6IDU4OS4wNDY4NzUsCiAgICAiYm90dG9tIjogNjMzLjA0Njg3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDYxNSwKICAgICJtYXhTY3JvbGwiOiA2MTUsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSIKICB9LAogICIvYXZhaWxhYmlsaXR5IjogewogICAgInRvcCI6IDU0MSwKICAgICJib3R0b20iOiA1ODUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiAyMzAsCiAgICAibWF4U2Nyb2xsIjogMTE5MCwKICAgICJvYnN0cnVjdGlvbiI6ICJCVVRUT04uYnRuIGJ0bi1wcmltYXJ5IGJ0bi1zbSIKICB9LAogICIvYXZhaWxhYmlsaXR5OmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogNjEwLjE4NzUsCiAgICAibmF2VG9wIjogNjEwLAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiA2NjcKICB9LAogICIvZmVlZGJhY2svY29tcGxldGVkIjogewogICAgInRvcCI6IDQ3My45MDYyNSwKICAgICJib3R0b20iOiA1MTcuOTA2MjUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiAzMTAsCiAgICAibWF4U2Nyb2xsIjogMzEwLAogICAgIm9ic3RydWN0aW9uIjogIkEuYnRuIGJ0bi1zZWNvbmRhcnkiCiAgfSwKICAiL2ZlZWRiYWNrL2NvbXBsZXRlZDpib3R0b20iOiB7CiAgICAiY29udGVudEJvdHRvbSI6IDYxMC4xODc1LAogICAgIm5hdlRvcCI6IDYxMCwKICAgICJuYXZQb3NpdGlvbiI6ICJzdGlja3kiLAogICAgInZpZXdwb3J0IjogNjY3CiAgfSwKICAiL3NjaGVkdWxlZC9hY2NlcHRlZCI6IHsKICAgICJ0b3AiOiA0NjMuODc1LAogICAgImJvdHRvbSI6IDUwNy44NzUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiA4NTIsCiAgICAibWF4U2Nyb2xsIjogODUyLAogICAgIm9ic3RydWN0aW9uIjogIkJVVFRPTi5idG4gYnRuLXF1aWV0IgogIH0sCiAgIi9zY2hlZHVsZWQvYWNjZXB0ZWQ6Ym90dG9tIjogewogICAgImNvbnRlbnRCb3R0b20iOiA2MTAuMjk2ODc1LAogICAgIm5hdlRvcCI6IDYxMCwKICAgICJuYXZQb3NpdGlvbiI6ICJzdGlja3kiLAogICAgInZpZXdwb3J0IjogNjY3CiAgfSwKICAiL3Byb2ZpbGUvc2FtIjogewogICAgInRvcCI6IDMwNi4zMTI1LAogICAgImJvdHRvbSI6IDM2MC41OTM3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDE1OCwKICAgICJtYXhTY3JvbGwiOiA5MzUsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSBidG4tc20iCiAgfSwKICAiL3Byb2ZpbGUvc2FtOmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogNjA5Ljg1OTM3NSwKICAgICJuYXZUb3AiOiA2MDkuODU5Mzc1LAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiA2NjcKICB9LAogICJ0YWIiOiB7CiAgICAiZ2FwIjogMCwKICAgICJkaXNwbGF5IjogImJsb2NrIgogIH0KfQ=="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-375x667\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-375x667\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                    "column": 60,
+                    "line": 66
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2c5b0c750eb75ce3bbfc-09c571e76dc2829624d1",
+          "file": "pending-fixes.spec.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "visual closure scroll and hit tests at 320x568",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1672,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60",
+                    "location": {
+                      "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                      "column": 60,
+                      "line": 66
+                    },
+                    "snippet": "  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                        "column": 60,
+                        "line": 66
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-07T17:24:02.802Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJvbmJvYXJkaW5nSW5wdXQiOiB7CiAgICAidG9wIjogMjYxLjQzNzUsCiAgICAiYm90dG9tIjogMzA2LjY4NzUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiA2ODgsCiAgICAibWF4U2Nyb2xsIjogODA5LAogICAgIm9ic3RydWN0aW9uIjogIklOUFVULmlucHV0IgogIH0sCiAgIm9uYm9hcmRpbmdPcHRpb24iOiB7CiAgICAidG9wIjogMjYxLjY4NzUsCiAgICAiYm90dG9tIjogMzA1LjY4NzUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiA3MzgsCiAgICAibWF4U2Nyb2xsIjogODA5LAogICAgIm9ic3RydWN0aW9uIjogIkJVVFRPTi5jb21iby1vcHQiCiAgfSwKICAib25ib2FyZGluZ0Zvb3RlciI6IHsKICAgICJ0b3AiOiA0OTAuMzU5Mzc1LAogICAgImJvdHRvbSI6IDUzNC4zNTkzNzUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiA4MDksCiAgICAibWF4U2Nyb2xsIjogODA5LAogICAgIm9ic3RydWN0aW9uIjogIkJVVFRPTi5idG4gYnRuLXByaW1hcnkiCiAgfSwKICAiL2F2YWlsYWJpbGl0eSI6IHsKICAgICJ0b3AiOiA0NDIsCiAgICAiYm90dG9tIjogNDg2LAogICAgImhpdCI6IHRydWUsCiAgICAic2Nyb2xsIjogMTgwLAogICAgIm1heFNjcm9sbCI6IDEzNTMsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSBidG4tc20iCiAgfSwKICAiL2F2YWlsYWJpbGl0eTpib3R0b20iOiB7CiAgICAiY29udGVudEJvdHRvbSI6IDUxMC43MTg3NSwKICAgICJuYXZUb3AiOiA1MTAuNzE4NzUsCiAgICAibmF2UG9zaXRpb24iOiAic3RpY2t5IiwKICAgICJ2aWV3cG9ydCI6IDU2OAogIH0sCiAgIi9mZWVkYmFjay9jb21wbGV0ZWQiOiB7CiAgICAidG9wIjogMzc0LjkwNjI1LAogICAgImJvdHRvbSI6IDQxOC45MDYyNSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDQwOSwKICAgICJtYXhTY3JvbGwiOiA0MDksCiAgICAib2JzdHJ1Y3Rpb24iOiAiQS5idG4gYnRuLXNlY29uZGFyeSIKICB9LAogICIvZmVlZGJhY2svY29tcGxldGVkOmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogNTExLjE4NzUsCiAgICAibmF2VG9wIjogNTExLAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiA1NjgKICB9LAogICIvc2NoZWR1bGVkL2FjY2VwdGVkIjogewogICAgInRvcCI6IDM0NC4yMDMxMjUsCiAgICAiYm90dG9tIjogMzg4LjIwMzEyNSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDEwOTUsCiAgICAibWF4U2Nyb2xsIjogMTA5NSwKICAgICJvYnN0cnVjdGlvbiI6ICJCVVRUT04uYnRuIGJ0bi1xdWlldCIKICB9LAogICIvc2NoZWR1bGVkL2FjY2VwdGVkOmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogNTEwLjc2NTYyNSwKICAgICJuYXZUb3AiOiA1MTAuNzY1NjI1LAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiA1NjgKICB9LAogICIvcHJvZmlsZS9zYW0iOiB7CiAgICAidG9wIjogMjQ2LjQ1MzEyNSwKICAgICJib3R0b20iOiAzMjAuODc1LAogICAgImhpdCI6IHRydWUsCiAgICAic2Nyb2xsIjogMjQ4LAogICAgIm1heFNjcm9sbCI6IDExNDgsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSBidG4tc20iCiAgfSwKICAiL3Byb2ZpbGUvc2FtOmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogNTEwLjY1NjI1LAogICAgIm5hdlRvcCI6IDUxMC42NTYyNSwKICAgICJuYXZQb3NpdGlvbiI6ICJzdGlja3kiLAogICAgInZpZXdwb3J0IjogNTY4CiAgfSwKICAidGFiIjogewogICAgImdhcCI6IDAsCiAgICAiZGlzcGxheSI6ICJibG9jayIKICB9Cn0="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-320x568\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-320x568\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                    "column": 60,
+                    "line": 66
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2c5b0c750eb75ce3bbfc-858706e06cc460aa1552",
+          "file": "pending-fixes.spec.ts",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "visual closure scroll and hit tests at 375x320",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1709,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60",
+                    "location": {
+                      "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                      "column": 60,
+                      "line": 66
+                    },
+                    "snippet": "  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                        "column": 60,
+                        "line": 66
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m6\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  64 |     await page.screenshot({ path: info.outputPath('invitation-tabs.png') })\n  65 |     await info.attach('geometry', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })\n> 66 |     expect.soft((measurements.tab as { gap: number }).gap).toBeGreaterThanOrEqual(6)\n     |                                                            ^\n  67 |   })\n  68 | }\n  69 |\n    at C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts:66:60"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-07T17:24:05.079Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJvbmJvYXJkaW5nSW5wdXQiOiB7CiAgICAidG9wIjogMTM3LjEyNSwKICAgICJib3R0b20iOiAxODIuMzc1LAogICAgImhpdCI6IHRydWUsCiAgICAic2Nyb2xsIjogNzE3LAogICAgIm1heFNjcm9sbCI6IDk2MiwKICAgICJvYnN0cnVjdGlvbiI6ICJJTlBVVC5pbnB1dCIKICB9LAogICJvbmJvYXJkaW5nT3B0aW9uIjogewogICAgInRvcCI6IDEzOC4zNzUsCiAgICAiYm90dG9tIjogMTgyLjM3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDc2NiwKICAgICJtYXhTY3JvbGwiOiA5NjIsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmNvbWJvLW9wdCIKICB9LAogICJvbmJvYXJkaW5nRm9vdGVyIjogewogICAgInRvcCI6IDI0Mi4wNDY4NzUsCiAgICAiYm90dG9tIjogMjg2LjA0Njg3NSwKICAgICJoaXQiOiB0cnVlLAogICAgInNjcm9sbCI6IDk2MiwKICAgICJtYXhTY3JvbGwiOiA5NjIsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSIKICB9LAogICIvYXZhaWxhYmlsaXR5IjogewogICAgInRvcCI6IDE5NCwKICAgICJib3R0b20iOiAyMzgsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiAxODksCiAgICAibWF4U2Nyb2xsIjogMTUzNywKICAgICJvYnN0cnVjdGlvbiI6ICJCVVRUT04uYnRuIGJ0bi1wcmltYXJ5IGJ0bi1zbSIKICB9LAogICIvYXZhaWxhYmlsaXR5OmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogMjYzLjE4NzUsCiAgICAibmF2VG9wIjogMjYzLAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiAzMjAKICB9LAogICIvZmVlZGJhY2svY29tcGxldGVkIjogewogICAgInRvcCI6IDEzNy45MDYyNSwKICAgICJib3R0b20iOiAxODEuOTA2MjUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiA2NDYsCiAgICAibWF4U2Nyb2xsIjogNjU3LAogICAgIm9ic3RydWN0aW9uIjogIkEuYnRuIGJ0bi1zZWNvbmRhcnkiCiAgfSwKICAiL2ZlZWRiYWNrL2NvbXBsZXRlZDpib3R0b20iOiB7CiAgICAiY29udGVudEJvdHRvbSI6IDI2My4xODc1LAogICAgIm5hdlRvcCI6IDI2MywKICAgICJuYXZQb3NpdGlvbiI6ICJzdGlja3kiLAogICAgInZpZXdwb3J0IjogMzIwCiAgfSwKICAiL3NjaGVkdWxlZC9hY2NlcHRlZCI6IHsKICAgICJ0b3AiOiAxMzcuODc1LAogICAgImJvdHRvbSI6IDE4MS44NzUsCiAgICAiaGl0IjogdHJ1ZSwKICAgICJzY3JvbGwiOiAxMTc4LAogICAgIm1heFNjcm9sbCI6IDExOTksCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcXVpZXQiCiAgfSwKICAiL3NjaGVkdWxlZC9hY2NlcHRlZDpib3R0b20iOiB7CiAgICAiY29udGVudEJvdHRvbSI6IDI2My4yOTY4NzUsCiAgICAibmF2VG9wIjogMjYzLAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiAzMjAKICB9LAogICIvcHJvZmlsZS9zYW0iOiB7CiAgICAidG9wIjogMTMzLjMxMjUsCiAgICAiYm90dG9tIjogMTg3LjU5Mzc1LAogICAgImhpdCI6IHRydWUsCiAgICAic2Nyb2xsIjogMzMxLAogICAgIm1heFNjcm9sbCI6IDEyODIsCiAgICAib2JzdHJ1Y3Rpb24iOiAiQlVUVE9OLmJ0biBidG4tcHJpbWFyeSBidG4tc20iCiAgfSwKICAiL3Byb2ZpbGUvc2FtOmJvdHRvbSI6IHsKICAgICJjb250ZW50Qm90dG9tIjogMjYyLjg1OTM3NSwKICAgICJuYXZUb3AiOiAyNjIuODU5Mzc1LAogICAgIm5hdlBvc2l0aW9uIjogInN0aWNreSIsCiAgICAidmlld3BvcnQiOiAzMjAKICB9LAogICJ0YWIiOiB7CiAgICAiZ2FwIjogMCwKICAgICJkaXNwbGF5IjogImJsb2NrIgogIH0KfQ=="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-375x320\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Projects\\match-skill\\frontend\\test-results\\pending-fixes-visual-closure-scroll-and-hit-tests-at-375x320\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Projects\\match-skill\\frontend\\tests\\pending-fixes.spec.ts",
+                    "column": 60,
+                    "line": 66
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2c5b0c750eb75ce3bbfc-9e5bdb1b2b332b54d21c",
+          "file": "pending-fixes.spec.ts",
+          "line": 16,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-07T17:23:56.652Z",
+    "duration": 10607.797,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

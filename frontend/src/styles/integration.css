@@ -1,0 +1,33 @@
+/* Integration additions preserve the approved visual language and utility tokens. */
+.mainpane, .page, .mcard, .rec-row > *, .range > *, .panel, .field { min-width: 0; }
+.page, .dialog, .reg, .auth-box { overflow-wrap: anywhere; }
+.btn { white-space: normal; }
+.mcard-foot { flex-wrap: wrap; }
+.pagination { gap: 12px; margin: 28px 0; }
+.skip-link { position: fixed; left: 12px; top: -100px; z-index: 100; background: var(--surface); padding: 12px; }
+.skip-link:focus { top: 12px; }
+.dialog-overlay { z-index: 100; }
+.dialog { max-height: 90dvh; overflow-y: auto; }
+.day .range input { width: 100%; min-width: 0; }
+.notice[role="alert"] { scroll-margin-top: 20px; }
+.dark { --raised: var(--color-secondary); --st-wait: oklch(76% 0.11 75); --st-go: oklch(76% 0.11 235); --st-done: oklch(76% 0.11 155); --st-stop: oklch(76% 0.17 27); }
+@media (max-width: 920px) {
+  .btn, .chip, .combo-opt, .pick, .tabs button { min-height: 44px; }
+  .save-bar { bottom: 68px; flex-wrap: wrap; gap: 12px; }
+  .rec-act .row, .row-between { flex-wrap: wrap; gap: 10px; }
+  .auth-box { width: 100%; }
+  .rate button { min-width: 44px; min-height: 44px; }
+  .tabbar a { min-width: 0; font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .page { padding-left: 14px; padding-right: 14px; }
+  .range { gap: 4px; grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr) 44px; }
+  .range .input { padding-left: 3px; padding-right: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+dialog.dialog-overlay { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; border: 0; color: var(--fg); }
+dialog.dialog-overlay:not([open]) { display: none; }
+dialog.dialog-overlay::backdrop { background: transparent; }
+.range .sep { white-space: nowrap; font-size: 10px; }

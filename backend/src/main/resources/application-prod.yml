@@ -1,0 +1,43 @@
+# Activate explicitly with SPRING_PROFILES_ACTIVE=prod after applying schema migrations.
+server:
+  address: 0.0.0.0
+  shutdown: graceful
+
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      data-source-properties:
+        sslmode: ${DB_SSLMODE:verify-full}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  data:
+    redis:
+      # Use rediss:// for an external TLS endpoint; Render's private URL may use redis://.
+      url: ${REDIS_URL}
+      # Spring Boot 3.3 does not select the database from the connection URL path.
+      database: ${REDIS_DATABASE:0}
+      connect-timeout: 5s
+      timeout: 2s
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            # Required only when Google credentials enable its client registration.
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+
+app:
+  jwt:
+    # Existing JwtProperties validation rejects missing, blank and short secrets.
+    secret: ${JWT_SECRET:}
+  oauth2:
+    success-redirect-uri: ${OAUTH2_SUCCESS_REDIRECT_URI}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
