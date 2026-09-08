@@ -90,8 +90,8 @@ class SkillServiceTest {
     }
 
     @Test
-    @DisplayName("Suggest: creates new skill with PENDING_REVIEW when slug does not exist")
-    void shouldCreateNewSkillWithPendingReviewStatus() {
+    @DisplayName("Suggest: creates new skill as APPROVED when slug does not exist")
+    void shouldCreateNewSkillWithApprovedStatus() {
         when(skillRepository.findIdentityCandidates(any(), any(), eq("Kubernetes"))).thenReturn(List.of());
         when(skillRepository.saveAndFlush(any(Skill.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -99,12 +99,12 @@ class SkillServiceTest {
 
         assertThat(result.getName()).isEqualTo("Kubernetes");
         assertThat(result.getSlug()).isEqualTo("kubernetes");
-        assertThat(result.getStatus()).isEqualTo(SkillStatus.PENDING_REVIEW);
+        assertThat(result.getStatus()).isEqualTo(SkillStatus.APPROVED);
         assertThat(result.getIdentityKey()).isEqualTo(Slugs.identityKey("Kubernetes"));
 
         ArgumentCaptor<Skill> captor = ArgumentCaptor.forClass(Skill.class);
         verify(skillRepository).saveAndFlush(captor.capture());
-        assertThat(captor.getValue().getStatus()).isEqualTo(SkillStatus.PENDING_REVIEW);
+        assertThat(captor.getValue().getStatus()).isEqualTo(SkillStatus.APPROVED);
     }
 
     @Test

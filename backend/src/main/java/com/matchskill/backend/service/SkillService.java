@@ -75,7 +75,7 @@ public class SkillService {
                     throw identityConflict();
                 }
                 result = Skill.builder().name(displayName).slug(slug).identityKey(identityKey)
-                        .status(SkillStatus.PENDING_REVIEW).build();
+                        .status(SkillStatus.APPROVED).build();
             }
             try {
                 return skillRepository.saveAndFlush(result);

@@ -61,7 +61,7 @@ class SkillIdentityPersistenceTest {
                 .stream().map(service::suggest).toList();
         assertThat(created).extracting(Skill::getId).doesNotHaveDuplicates();
         assertThat(created).extracting(Skill::getSlug).doesNotHaveDuplicates();
-        assertThat(created).allSatisfy(skill -> assertThat(skill.getStatus()).isEqualTo(SkillStatus.PENDING_REVIEW));
+        assertThat(created).allSatisfy(skill -> assertThat(skill.getStatus()).isEqualTo(SkillStatus.APPROVED));
     }
 
     @ParameterizedTest
