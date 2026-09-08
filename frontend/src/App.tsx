@@ -15,6 +15,7 @@ import { SchedulingPage } from '@/pages/SchedulingPage'
 import { HistoryPage } from '@/pages/HistoryPage'
 import { FeedbackPage } from '@/pages/FeedbackPage'
 import { AvailabilityPage } from '@/pages/AvailabilityPage'
+import { PrivacyPage } from '@/pages/PrivacyPage'
 
 function Shell() {
   const { user, logout } = useAuth()
@@ -26,6 +27,7 @@ function Shell() {
 export function App() {
   return <AuthProvider><Routes>
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/privacy" element={<PrivacyPage />} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route element={<ProtectedRoute />}>
       <Route path="/skills/register" element={<SkillRegistrationPage />} />
