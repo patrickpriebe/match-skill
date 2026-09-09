@@ -1,5 +1,6 @@
 import { Notice } from '../ui/Surface'
 import { Button } from '../ui/Button'
+import { useT } from '@/i18n/I18nContext'
 import type { ApiError } from '@/lib/api/types'
 
 /**
@@ -12,19 +13,20 @@ export function ErrorState({ error, onRetry, context }: {
   onRetry?: () => void
   context?: string
 }) {
+  const t = useT()
   const isNetwork = error.code === 'NETWORK' || error.status === 0
 
   return (
     <Notice tone="stop">
-      <b>{isNetwork ? 'We could not reach the server.' : (context ?? 'That did not work.')}</b>
+      <b>{isNetwork ? t('errorState.networkTitle') : (context ?? t('errorState.genericTitle'))}</b>
       <br />
       {isNetwork
-        ? 'Nothing was changed on our side — this is a connection problem, not lost data.'
+        ? t('errorState.networkBody')
         : error.message}
       {onRetry && (
         <>
           <br />
-          <Button size="sm" onClick={onRetry} style={{ marginTop: 10 }}>Try again</Button>
+          <Button size="sm" onClick={onRetry} style={{ marginTop: 10 }}>{t('errorState.tryAgain')}</Button>
         </>
       )}
     </Notice>

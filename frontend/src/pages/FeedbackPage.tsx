@@ -15,8 +15,10 @@ import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
 import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { counterpart } from '@/components/design/domain/exchange-helpers'
+import { useT } from '@/i18n/I18nContext'
 
 export function FeedbackPage() {
+  const t = useT()
   const { id = '' } = useParams()
   const { user } = useAuth()
   const meId = user?.id ?? ''
@@ -29,18 +31,18 @@ export function FeedbackPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   if (record.status === 'error') return <ErrorState error={record.error} onRetry={record.reload} />
-  if (record.status === 'loading') return <LoadingState label="Loading feedback"><SkeletonRows /></LoadingState>
+  if (record.status === 'loading') return <LoadingState label={t('feedback.loadingFeedback')}><SkeletonRows /></LoadingState>
   const { exchange, feedback } = record.data
   const mine = feedback?.mine
   const other = counterpart(exchange, meId)
   const directions = exchangeDirections(exchange, meId)
-  if (exchange.status !== 'COMPLETED') return <><PageHeader title="Feedback" /><EmptyState title="This exchange is not completed yet" actions={<LinkButton to={'/exchanges/' + id}>Open exchange</LinkButton>}>Only completed exchanges can be rated.</EmptyState></>
-  if (mine) return <><PageHeader title={'Your feedback for ' + other.displayName} />
-    <Card><h2 className="h2">Your rating is saved</h2><p>{mine.rating} of 5</p>{mine.comment && <p>{mine.comment}</p>}
-      <Notice>{feedback?.counterpartSubmitted ? 'Both ratings are published and contribute to your public reputations.' : 'Your rating is saved privately. It will publish when the other participant submits their rating. There is no release deadline.'}</Notice>
-      {feedback?.theirs && <section style={{ marginTop: 20 }}><h2 className="h2">Their feedback for you</h2><p>{feedback.theirs.rating} of 5</p>{feedback.theirs.comment && <p>{feedback.theirs.comment}</p>}</section>}
-      <p className="small dim">One rating per person per exchange. Your saved rating cannot be edited.</p>
-      <LinkButton to="/history">Return to history</LinkButton>
+  if (exchange.status !== 'COMPLETED') return <><PageHeader title={t('feedback.title')} /><EmptyState title={t('feedback.notCompletedTitle')} actions={<LinkButton to={'/exchanges/' + id}>{t('feedback.openExchange')}</LinkButton>}>{t('feedback.notCompletedBody')}</EmptyState></>
+  if (mine) return <><PageHeader title={t('feedback.yourFeedbackFor', { name: other.displayName })} />
+    <Card><h2 className="h2">{t('feedback.ratingSaved')}</h2><p>{t('feedback.outOfFive', { rating: mine.rating })}</p>{mine.comment && <p>{mine.comment}</p>}
+      <Notice>{feedback?.counterpartSubmitted ? t('feedback.bothPublished') : t('feedback.savedPrivately')}</Notice>
+      {feedback?.theirs && <section style={{ marginTop: 20 }}><h2 className="h2">{t('feedback.theirFeedbackForYou')}</h2><p>{t('feedback.outOfFive', { rating: feedback.theirs.rating })}</p>{feedback.theirs.comment && <p>{feedback.theirs.comment}</p>}</section>}
+      <p className="small dim">{t('feedback.onePerPerson')}</p>
+      <LinkButton to="/history">{t('feedback.returnToHistory')}</LinkButton>
     </Card></>
   async function submit(event: React.FormEvent) {
     event.preventDefault()
@@ -51,34 +53,35 @@ export function FeedbackPage() {
       record.reload()
     } catch (err) {
       if (err instanceof ApiError && err.code === 'FEEDBACK_ALREADY_SUBMITTED') record.reload()
-      else setError(err instanceof Error ? err.message : 'Feedback could not be saved.')
+      else setError(err instanceof Error ? err.message : t('feedback.couldNotSave'))
     } finally { setBusy(false) }
   }
   return <div className="fb-wrap">
-    <PageHeader detail title={'How did it go with ' + other.displayName.split(' ')[0] + '?'} lead="Describe your exchange to help others decide who to learn with." />
+    <PageHeader detail title={t('feedback.howDidItGo', { name: other.displayName.split(' ')[0] })} lead={t('feedback.lead')} />
     <Card style={{ marginBottom: 24 }}><UserCard name={other.displayName} meta={other.timeZone} />
       <TradeLedger sides={[
-        { direction: 'You learned', skill: directions.youLearn?.name ?? 'Not recorded' },
-        { direction: 'They learned', skill: directions.theyLearn?.name ?? 'Not recorded' },
+        { direction: t('feedback.youLearned'), skill: directions.youLearn?.name ?? t('scheduling.notRecorded') },
+        { direction: t('feedback.theyLearned'), skill: directions.theyLearn?.name ?? t('scheduling.notRecorded') },
       ]} />
     </Card>
     <form className="stack" onSubmit={submit}>
-      <fieldset style={{ border: 0, padding: 0 }}><legend className="h3">Your rating</legend>
+      <fieldset style={{ border: 0, padding: 0 }}><legend className="h3">{t('feedback.yourRating')}</legend>
         <StarInput value={rating} onChange={setRating} />
-        <p className="small dim">{rating ? rating + ' of 5' : 'Choose a rating'} · use arrow keys to move.</p>
+        <p className="small dim">{rating ? t('feedback.ratingOf', { rating }) : t('feedback.chooseARating')} {t('feedback.useArrowKeys')}</p>
       </fieldset>
-      <Field label="Comment (optional)">{(fieldId) => <Textarea id={fieldId} maxLength={2000} value={comment} onChange={(e) => setComment(e.target.value)} />}</Field>
-      <Notice>{feedback?.counterpartSubmitted ? 'They have submitted their rating. Its contents remain hidden until you submit yours.' : 'Your rating stays private until both participants submit. Both ratings then publish together and contribute to reputation.'}</Notice>
+      <Field label={t('feedback.commentOptional')}>{(fieldId) => <Textarea id={fieldId} maxLength={2000} value={comment} onChange={(e) => setComment(e.target.value)} />}</Field>
+      <Notice>{feedback?.counterpartSubmitted ? t('feedback.theirsSubmittedNote') : t('feedback.stayPrivateNote')}</Notice>
       {error && <Notice tone="stop">{error}</Notice>}
-      <div className="row wrap" style={{ gap: 8 }}><Button variant="primary" type="submit" loading={busy} disabled={!rating}>Submit rating</Button><LinkButton to="/history">Not now</LinkButton></div>
-      <p className="small dim">One rating per person per completed exchange. Once saved, it cannot be edited.</p>
+      <div className="row wrap" style={{ gap: 8 }}><Button variant="primary" type="submit" loading={busy} disabled={!rating}>{t('feedback.submitRating')}</Button><LinkButton to="/history">{t('common.notNow')}</LinkButton></div>
+      <p className="small dim">{t('feedback.onePerPersonSubmitNote')}</p>
     </form>
   </div>
 }
 function StarInput({ value, onChange }: { value: number; onChange: (n: number) => void }) {
+  const t = useT()
   return <div className="rate" role="radiogroup" aria-label="Rating from 1 to 5">
     {[1, 2, 3, 4, 5].map((n) => <button key={n} type="button" role="radio" aria-checked={value === n}
-      tabIndex={value === n || (!value && n === 1) ? 0 : -1} aria-label={n + (n === 1 ? ' star' : ' stars')}
+      tabIndex={value === n || (!value && n === 1) ? 0 : -1} aria-label={n + (n === 1 ? t('feedback.star') : t('feedback.stars'))}
       className={n <= value ? 'is-lit' : undefined} onClick={() => onChange(n)} onKeyDown={(e) => {
         const direction = ['ArrowRight', 'ArrowUp'].includes(e.key) ? 1 : ['ArrowLeft', 'ArrowDown'].includes(e.key) ? -1 : 0
         if (!direction) return

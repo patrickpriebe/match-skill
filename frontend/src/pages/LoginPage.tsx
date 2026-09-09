@@ -8,6 +8,8 @@ import { Button } from '@/components/design/ui/Button'
 import { Field, Input } from '@/components/design/ui/Form'
 import { Notice } from '@/components/design/ui/Surface'
 import { IconGoogle } from '@/components/design/ui/icons'
+import { LanguageSwitcher } from '@/components/design/ui/LanguageSwitcher'
+import { useT } from '@/i18n/I18nContext'
 import type { ApiError } from '@/lib/api/types'
 
 /**
@@ -16,6 +18,7 @@ import type { ApiError } from '@/lib/api/types'
  * so it cannot be used to enumerate accounts.
  */
 export function LoginPage() {
+  const t = useT()
   const { login, register, status, user } = useAuth()
   const location = useLocation()
   const [displayName, setDisplayName] = useState('')
@@ -30,7 +33,7 @@ export function LoginPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     if (busy) return
-    if (mode === 'signup' && new TextEncoder().encode(password).length > 72) { setError('Password must be at most 72 UTF-8 bytes.'); return }
+    if (mode === 'signup' && new TextEncoder().encode(password).length > 72) { setError(t('login.passwordTooLong')); return }
     setBusy(true)
     setError(null)
     try {
@@ -51,54 +54,57 @@ export function LoginPage() {
   return (
     <div className="auth">
       <aside className="auth-aside">
-        <BrandLockup to="/" />
+        <div className="row-between">
+          <BrandLockup to="/" />
+          <LanguageSwitcher />
+        </div>
         <div style={{ margin: 'auto 0', maxWidth: '34ch' }}>
-          <p className="eyebrow" style={{ marginBottom: 14 }}>How it works</p>
+          <p className="eyebrow" style={{ marginBottom: 14 }}>{t('login.eyebrow')}</p>
           <p className="h1" style={{ fontSize: 'clamp(26px, 2.6vw, 34px)', lineHeight: 1.14 }}>
-            You teach what you know. Someone teaches you what you don&rsquo;t.
+            {t('login.headline')}
           </p>
           <TradeLedger
             style={{ marginTop: 28 }}
             sides={[
-              { direction: 'You list', skill: 'what you can teach' },
-              { direction: 'And', skill: 'what you want to learn' },
-              { direction: 'We find', skill: 'people whose lists complete yours' },
+              { direction: t('login.ledgerYouList'), skill: t('login.ledgerYouListSkill') },
+              { direction: t('login.ledgerAnd'), skill: t('login.ledgerAndSkill') },
+              { direction: t('login.ledgerWeFind'), skill: t('login.ledgerWeFindSkill') },
             ]}
           />
         </div>
         <p className="small dim" style={{ maxWidth: '40ch' }}>
-          Meetings happen on your own tool — Zoom, Meet, Teams or Whereby. match·skill arranges
-          the exchange, it does not host it.
+          {t('login.meetings')}
         </p>
       </aside>
 
       <main className="auth-main">
         <div className="auth-box">
-          <div className="only-m" style={{ marginBottom: 28 }}>
+          <div className="only-m row-between" style={{ marginBottom: 28 }}>
             <BrandLockup to="/" />
+            <LanguageSwitcher />
           </div>
 
           <h1 className="h1 is-detail" style={{ marginBottom: 6 }}>
-            {mode === 'signin' ? 'Sign in' : 'Create an account'}
+            {mode === 'signin' ? t('login.signIn') : t('login.createAccount')}
           </h1>
           <p className="dim small" style={{ marginBottom: 26 }}>
-            {mode === 'signin' ? 'New here? ' : 'Already have an account? '}
+            {mode === 'signin' ? t('login.newHere') : t('login.alreadyHaveAccount')}
             <button
               type="button"
               className="link"
               style={{ background: 'none', border: 0, padding: 0 }}
               onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null) }}
             >
-              {mode === 'signin' ? 'Create an account' : 'Sign in'}
+              {mode === 'signin' ? t('login.createAccount') : t('login.signIn')}
             </button>
           </p>
 
           <form className="stack" onSubmit={submit}>
             {mode === 'signup' && <>
-              <Field label="Display name">{(id) => <Input id={id} required maxLength={255} autoComplete="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />}</Field>
-              <Field label="Time zone" hint="Use an IANA zone, for example America/Sao_Paulo.">{(id) => <Input id={id} required value={timeZone} onChange={(e) => setTimeZone(e.target.value)} />}</Field>
+              <Field label={t('login.displayName')}>{(id) => <Input id={id} required maxLength={255} autoComplete="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />}</Field>
+              <Field label={t('login.timeZone')} hint={t('login.timeZoneHint')}>{(id) => <Input id={id} required value={timeZone} onChange={(e) => setTimeZone(e.target.value)} />}</Field>
             </>}
-            <Field label="Email">
+            <Field label={t('login.email')}>
               {(id) => (
                 <Input
                   id={id} type="email" autoComplete="email" value={email} required
@@ -108,7 +114,7 @@ export function LoginPage() {
               )}
             </Field>
 
-            <Field label="Password" hint={mode === 'signup' ? 'At least 8 characters, with uppercase, lowercase, a number and a symbol. Maximum 72 UTF-8 bytes.' : undefined}>
+            <Field label={t('login.password')} hint={mode === 'signup' ? t('login.passwordHintSignup') : undefined}>
               {(id) => (
                 <Input
                   id={id} type="password" value={password} required minLength={mode === 'signup' ? 8 : undefined}
@@ -122,23 +128,22 @@ export function LoginPage() {
             {error && <Notice tone="stop">{error}</Notice>}
 
             <Button type="submit" variant="primary" wide loading={busy}>
-              {mode === 'signin' ? 'Sign in' : 'Create account'}
+              {mode === 'signin' ? t('login.signIn') : t('login.createAccountButton')}
             </Button>
           </form>
 
           <div className="row" style={{ margin: '26px 0', gap: 14 }}>
             <hr className="block-rule soft" style={{ flex: 1, margin: 0 }} />
-            <span className="meta">or</span>
+            <span className="meta">{t('login.or')}</span>
             <hr className="block-rule soft" style={{ flex: 1, margin: 0 }} />
           </div>
 
           <a className="btn btn-secondary btn-wide" href={api.googleAuthUrl()}>
-            <IconGoogle /> Continue with Google
+            <IconGoogle /> {t('login.continueWithGoogle')}
           </a>
 
           <p className="small dim" style={{ marginTop: 26, lineHeight: 1.6 }}>
-            Signing in with Google using an address that already has a password links the two
-            accounts rather than creating a second one.
+            {t('login.googleLinkNote')}
           </p>
         </div>
       </main>

@@ -21,7 +21,8 @@ import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
 import { counterpart } from '@/components/design/domain/exchange-helpers'
-import type { ApiError } from '@/lib/api/types'
+import { useT } from '@/i18n/I18nContext'
+import type { ApiError, DayOfWeek } from '@/lib/api/types'
 
 /**
  * Turns ACCEPTED into SCHEDULED. There is no endpoint that returns mutual
@@ -29,6 +30,8 @@ import type { ApiError } from '@/lib/api/types'
  * windows are guidance beside the picker — they warn, they do not block.
  */
 export function SchedulingPage() {
+  const t = useT()
+  const dayLabel = (day: DayOfWeek) => t(`daysShort.${day}`)
   const { id = '' } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -60,7 +63,7 @@ export function SchedulingPage() {
     return <ErrorState error={exchange.error} onRetry={exchange.reload} />
   }
   if (exchange.status === 'loading' || myAvailability.status !== 'ready') {
-    return <LoadingState label="Loading"><SkeletonRows count={4} /></LoadingState>
+    return <LoadingState label={t('scheduling.loading')}><SkeletonRows count={4} /></LoadingState>
   }
 
   const ex = exchange.data
@@ -99,25 +102,25 @@ export function SchedulingPage() {
     <>
       <PageHeader
         badges={<ExchangeStatusBadge status={ex.status} />}
-        title={'Settle a time with ' + first}
-        lead="Every time below is shown in both zones. The platform arranges the exchange — the meeting itself happens on your own tool."
+        title={t('scheduling.withName', { name: first })}
+        lead={t('scheduling.lead')}
       />
 
       <div className="sch-grid">
         <div>
-          <Section title="What you agreed" emphasis>
+          <Section title={t('scheduling.whatYouAgreed')} emphasis>
             <TradeLedger
               style={{ borderTop: 0 }}
               sides={[
-                { direction: 'You learn', skill: directions.youLearn?.name ?? 'Not recorded', from: 'from ' + first },
-                { direction: 'They learn', skill: directions.theyLearn?.name ?? 'Not recorded', from: 'from you' },
+                { direction: t('scheduling.youLearn'), skill: directions.youLearn?.name ?? t('scheduling.notRecorded'), from: t('common.from', { name: first }) },
+                { direction: t('scheduling.theyLearn'), skill: directions.theyLearn?.name ?? t('scheduling.notRecorded'), from: t('common.fromYou') },
               ]}
             />
           </Section>
 
           <Section
-            title="When you are both usually free"
-            note="Each weekly window is shown in its owner's time zone. These windows guide your choice; they do not reserve a meeting."
+            title={t('scheduling.whenFree')}
+            note={t('scheduling.whenFreeNote')}
           >
             {hasAvailability ? (
               <>
@@ -125,26 +128,25 @@ export function SchedulingPage() {
                   <AvailabilityPreview windows={myAvailability.data.windows} />
                 </div>
                 <p className="small" style={{ marginTop: 14 }}>
-                  <b>You ({zone}):</b> {summarise(myAvailability.data.windows) || 'No windows recorded'}.
+                  <b>{t('scheduling.youZone', { zone })}</b> {summarise(myAvailability.data.windows, dayLabel) || t('scheduling.noWindowsRecorded')}.
                 </p>
-                <p className="small"><b>{first} ({theirProfile.data?.timezone ?? other.timeZone}):</b> {summarise(theirAvailability) || 'No windows recorded'}.</p>
+                <p className="small"><b>{t('scheduling.otherZone', { name: first, zone: theirProfile.data?.timezone ?? other.timeZone ?? '' })}</b> {summarise(theirAvailability, dayLabel) || t('scheduling.noWindowsRecorded')}.</p>
               </>
             ) : (
-              <EmptyState title="No weekly windows recorded">
-                One of you has no recorded windows, or they never meet. You can still pick a
-                time — it will just take a round trip to confirm.
+              <EmptyState title={t('scheduling.noWeeklyWindowsTitle')}>
+                {t('scheduling.noWeeklyWindowsBody')}
               </EmptyState>
             )}
           </Section>
 
-          <Section title="Date and time">
+          <Section title={t('scheduling.dateAndTime')}>
             <div className="when-row">
-              <Field label="Date">
+              <Field label={t('scheduling.date')}>
                 {(fieldId) => (
                   <Input id={fieldId} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                 )}
               </Field>
-              <Field label={<>Start time <span className="dim">- {zone}</span></>}>
+              <Field label={<>{t('scheduling.startTime')} <span className="dim">- {zone}</span></>}>
                 {(fieldId) => (
                   <Input id={fieldId} type="time" value={time} onChange={(e) => setTime(e.target.value)} />
                 )}
@@ -152,27 +154,26 @@ export function SchedulingPage() {
             </div>
 
             {converted.error && <Notice tone="stop">{converted.error}</Notice>}
-            {iso && !future && <Notice tone="stop">Choose a future date and time.</Notice>}
+            {iso && !future && <Notice tone="stop">{t('scheduling.chooseFuture')}</Notice>}
             {iso && (
               <>
                 <div style={{ marginTop: 16 }}>
                   <ZonedTime
                     iso={iso}
-                    mine={{ timeZone: user?.timeZone ?? 'UTC', label: 'You' }}
+                    mine={{ timeZone: user?.timeZone ?? 'UTC', label: t('common.you') }}
                     theirs={{ timeZone: theirProfile.data?.timezone ?? other.timeZone ?? 'UTC', label: first }}
                   />
                 </div>
                 <Notice className="aside-note">
-                  The confirmation and the exchange record both carry the absolute instant, so
-                  neither of you has to do the arithmetic again.
+                  {t('scheduling.absoluteInstantNote')}
                 </Notice>
               </>
             )}
           </Section>
 
           <Section
-            title="Meeting link"
-            note="An exchange is a channel to a stranger, so the link is checked on the server against a list of meeting-tool hosts and refused otherwise."
+            title={t('scheduling.meetingLink')}
+            note={t('scheduling.meetingLinkNote')}
           >
             <MeetingLinkField value={link} onChange={(value) => { setLink(value); setLinkError(null) }} serverError={linkError} />
           </Section>
@@ -181,13 +182,12 @@ export function SchedulingPage() {
 
           <div className="row wrap" style={{ gap: 10, marginTop: 'var(--gap-lg)' }}>
             <Button variant="primary" loading={busy} disabled={!ready} onClick={() => void confirm()}>
-              Confirm the meeting
+              {t('scheduling.confirmMeeting')}
             </Button>
-            <Button variant="quiet" onClick={() => navigate('/invitations')}>Back to invitations</Button>
+            <Button variant="quiet" onClick={() => navigate('/invitations')}>{t('scheduling.backToInvitations')}</Button>
           </div>
           <p className="small dim" style={{ marginTop: 10, maxWidth: '56ch' }}>
-            There is no reschedule step. Changing a confirmed time means cancelling the exchange
-            and starting again, so check the zones once more before you confirm.
+            {t('scheduling.noRescheduleNote')}
           </p>
         </div>
       </div>

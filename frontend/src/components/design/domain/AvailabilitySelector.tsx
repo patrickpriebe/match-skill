@@ -1,7 +1,8 @@
 import { timeInMinutes as minutes } from '@/lib/availability'
-import { DAY_LABEL, totalHours, windowIsValid, type DraftWindow } from './availability-helpers'
+import { totalHours, windowIsValid, type DraftWindow } from './availability-helpers'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Form'
+import { useT } from '@/i18n/I18nContext'
 import { DAYS } from '@/lib/api/types'
 import type { DayOfWeek } from '@/lib/api/types'
 
@@ -21,6 +22,8 @@ export function AvailabilitySelector({ windows, onChange }: {
   windows: DraftWindow[]
   onChange: (next: DraftWindow[]) => void
 }) {
+  const t = useT()
+  const dayLabel = (day: DayOfWeek) => t(`days.${day}`)
   const update = (index: number, patch: Partial<DraftWindow>) =>
     onChange(windows.map((w, i) => (i === index ? { ...w, ...patch } : w)))
 
@@ -41,17 +44,17 @@ export function AvailabilitySelector({ windows, onChange }: {
         return (
           <div className="day" key={day}>
             <div className="day-head">
-              <span className="day-name">{DAY_LABEL[day]}</span>
+              <span className="day-name">{dayLabel(day)}</span>
               <span className="meta">
-                {rows.length === 0 ? 'no windows' : hours + 'h'}
-                {invalid && ' · one window invalid'}
+                {rows.length === 0 ? t('availability.noWindows') : t('availability.hoursShort', { hours })}
+                {invalid && t('availability.oneInvalid')}
               </span>
             </div>
 
             {rows.length === 0 ? (
               <div className="row" style={{ gap: 10 }}>
-                <span className="day-empty">Nothing set.</span>
-                <Button variant="quiet" size="sm" onClick={() => add(day)}>Add a window</Button>
+                <span className="day-empty">{t('availability.nothingSetDay')}</span>
+                <Button variant="quiet" size="sm" onClick={() => add(day)}>{t('availability.addAWindow')}</Button>
               </div>
             ) : (
               <>
@@ -61,18 +64,18 @@ export function AvailabilitySelector({ windows, onChange }: {
                     <div className="range" key={index}>
                       <Input
                         type="time" mono value={w.startTime} invalid={bad}
-                        aria-label={DAY_LABEL[day] + ' start'}
+                        aria-label={dayLabel(day) + ' start'}
                         onChange={(e) => update(index, { startTime: e.target.value })}
                       />
-                      <span className="sep">to</span>
+                      <span className="sep">{t('availability.to')}</span>
                       <Input
                         type="time" mono value={w.endTime} invalid={bad}
-                        aria-label={DAY_LABEL[day] + ' end'}
+                        aria-label={dayLabel(day) + ' end'}
                         onChange={(e) => update(index, { endTime: e.target.value })}
                       />
                       <button
                         type="button" className="rm"
-                        aria-label={'Remove ' + DAY_LABEL[day] + ' ' + w.startTime + ' to ' + w.endTime}
+                        aria-label={t('availability.removeWindow', { day: dayLabel(day), start: w.startTime, end: w.endTime })}
                         onClick={() => remove(index)}
                       >
                         ×
@@ -82,11 +85,11 @@ export function AvailabilitySelector({ windows, onChange }: {
                 })}
                 {invalid && (
                   <p className="err-text" style={{ marginTop: 8 }}>
-                    A window ends before it starts. Fix or remove it before saving.
+                    {t('availability.windowInvalidError')}
                   </p>
                 )}
                 <Button variant="quiet" size="sm" style={{ marginTop: 8 }} onClick={() => add(day)}>
-                  Add a window
+                  {t('availability.addAWindow')}
                 </Button>
               </>
             )}
@@ -104,6 +107,7 @@ export function AvailabilityPreview({ windows, otherWindows }: {
   windows: DraftWindow[]
   otherWindows?: DraftWindow[]
 }) {
+  const t = useT()
   const bands = [0, 3, 6, 9, 12, 15, 18, 21]
   const covers = (list: DraftWindow[], day: DayOfWeek, band: number) =>
     list.some((w) => w.dayOfWeek === day && minutes(w.startTime) < (band + 3) * 60 && minutes(w.endTime) > band * 60)
@@ -111,7 +115,7 @@ export function AvailabilityPreview({ windows, otherWindows }: {
   return (
     <div className="wk" style={{ gridTemplateColumns: '34px repeat(7, 1fr)' }}>
       <span />
-      {DAYS.map((d) => <span className="wk-h" key={d}>{DAY_LABEL[d][0]}</span>)}
+      {DAYS.map((d) => <span className="wk-h" key={d}>{t(`daysShort.${d}`)[0]}</span>)}
       {bands.flatMap((band) => [
         <span className="wk-t" key={'t' + band}>{String(band).padStart(2, '0')}</span>,
         ...DAYS.map((day) => {

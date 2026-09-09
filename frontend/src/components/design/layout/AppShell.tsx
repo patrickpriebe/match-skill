@@ -4,33 +4,39 @@ import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { BrandLockup } from '../domain/BrandMark'
 import { UserCard } from '../domain/UserCard'
+import { LanguageSwitcher } from '../ui/LanguageSwitcher'
+import { useT } from '@/i18n/I18nContext'
 import type { User } from '@/lib/api/types'
 
 export interface NavItem {
   to: string
-  label: string
-  short: string
+  labelKey: string
+  shortKey: string
   count?: number
 }
 
 const NAV: NavItem[] = [
-  { to: '/home', label: 'Matches', short: 'Matches' },
-  { to: '/search', label: 'Search', short: 'Search' },
-  { to: '/invitations', label: 'Invitations', short: 'Invites' },
-  { to: '/scheduled', label: 'Scheduled', short: 'Times' },
-  { to: '/history', label: 'History', short: 'History' },
-  { to: '/availability', label: 'Availability', short: 'Free' },
+  { to: '/home', labelKey: 'nav.matches', shortKey: 'nav.matchesShort' },
+  { to: '/search', labelKey: 'nav.search', shortKey: 'nav.searchShort' },
+  { to: '/invitations', labelKey: 'nav.invitations', shortKey: 'nav.invitationsShort' },
+  { to: '/scheduled', labelKey: 'nav.scheduled', shortKey: 'nav.scheduledShort' },
+  { to: '/history', labelKey: 'nav.history', shortKey: 'nav.historyShort' },
+  { to: '/availability', labelKey: 'nav.availability', shortKey: 'nav.availabilityShort' },
 ]
 
 function Sidebar({ items, user }: { items: NavItem[]; user: User | null }) {
+  const t = useT()
   const { logout } = useAuth()
   return (
     <aside className="sidebar">
-      <BrandLockup to="/home" />
-      <nav className="side-nav" aria-label="Main">
+      <div className="row-between">
+        <BrandLockup to="/home" />
+        <LanguageSwitcher />
+      </div>
+      <nav className="side-nav" aria-label={t('nav.main')}>
         {items.map((item) => (
           <NavLink key={item.to} to={item.to} className={({ isActive }) => (isActive ? 'is-active' : '')}>
-            {item.label}
+            {t(item.labelKey)}
             {item.count !== undefined && item.count > 0 && <span className="count">{item.count}</span>}
           </NavLink>
         ))}
@@ -40,7 +46,7 @@ function Sidebar({ items, user }: { items: NavItem[]; user: User | null }) {
           <NavLink to="/profile/me" style={{ display: 'block' }}>
             <UserCard name={user.displayName} size="sm" nameSize={14} meta={user.timeZone} />
           </NavLink>
-          <Button variant="quiet" size="sm" onClick={logout}>Sign out</Button>
+          <Button variant="quiet" size="sm" onClick={logout}>{t('common.signOut')}</Button>
         </div>
       )}
     </aside>
@@ -61,11 +67,12 @@ function MobileBar({ action }: { action?: ReactNode }) {
 /** Five destinations at most on a phone — the sidebar's six collapse by
  *  folding Scheduled into Invitations, which is where its work starts. */
 function TabBar({ items }: { items: NavItem[] }) {
+  const t = useT()
   return (
-    <nav className="tabbar" aria-label="Main">
+    <nav className="tabbar" aria-label={t('nav.main')}>
       {items.map((item) => (
         <NavLink key={item.to} to={item.to} className={({ isActive }) => (isActive ? 'is-active' : '')}>
-          {item.short}
+          {t(item.shortKey)}
         </NavLink>
       ))}
     </nav>
@@ -84,17 +91,18 @@ export function AppShell({ user, invitationCount, scheduledCount, mobileAction, 
   mobileAction?: ReactNode
   children: ReactNode
 }) {
+  const t = useT()
   const items = NAV.map((item) =>
     item.to === '/invitations' ? { ...item, count: invitationCount }
       : item.to === '/scheduled' ? { ...item, count: scheduledCount }
         : item)
 
   const tabs = items.filter((i) => i.to !== '/scheduled' && i.to !== '/availability')
-    .concat({ to: '/profile/me', label: 'You', short: 'You' })
+    .concat({ to: '/profile/me', labelKey: 'nav.you', shortKey: 'nav.you' })
 
   return (
     <div className="app">
-      <a className="skip-link" href="#main-content">Skip to content</a>
+      <a className="skip-link" href="#main-content">{t('common.skipToContent')}</a>
       <Sidebar items={items} user={user} />
       <div className="mainpane">
         <MobileBar action={mobileAction} />

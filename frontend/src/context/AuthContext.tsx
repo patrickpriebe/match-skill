@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { api, ApiError, setApiAuthToken, type LoginPayload, type RegisterPayload, type User } from '@/lib/api'
+import { useT } from '@/i18n/I18nContext'
 
 const TOKEN_KEY = 'match-skill-token'
 interface AuthContextValue {
@@ -17,6 +18,7 @@ interface AuthContextValue {
 }
 const AuthContext = createContext<AuthContextValue | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const t = useT()
   const [user, setUser] = useState<User | null>(null)
   const [status, setStatus] = useState<AuthContextValue['status']>('loading')
   const [error, setError] = useState<string | null>(null)
@@ -49,10 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }).catch((err: unknown) => {
       if (cancelled) return
       if (err instanceof ApiError && err.status === 401) logout()
-      else setError('We could not restore your session. Try again when the connection returns.')
+      else setError(t('protectedRoute.sessionRestoreFailed'))
     })
     return () => { cancelled = true }
-  }, [attempt, establish, logout])
+  }, [attempt, establish, logout, t])
   useEffect(() => {
     const expired = () => logout()
     window.addEventListener('match-skill:unauthorized', expired)

@@ -2,17 +2,18 @@ import { Field, Input } from '../ui/Form'
 
 import { DEFAULT_MEETING_HOSTS } from './meeting-hosts'
 import { meetingUrlError, MEETING_URL_MAX_LENGTH } from '@/lib/meetingUrl'
+import { useT } from '@/i18n/I18nContext'
 
 function recognise(value: string, hosts: typeof DEFAULT_MEETING_HOSTS) {
   try {
     const url = new URL(value)
-    if (url.protocol !== 'https:') return { ok: false as const, reason: 'https is required.' }
+    if (url.protocol !== 'https:') return { ok: false as const }
     const match = hosts.find((h) => url.hostname === h.host || url.hostname.endsWith('.' + h.host))
     return match
       ? { ok: true as const, name: match.name }
-      : { ok: false as const, reason: null }
+      : { ok: false as const }
   } catch {
-    return { ok: false as const, reason: null }
+    return { ok: false as const }
   }
 }
 
@@ -29,21 +30,18 @@ export function MeetingLinkField({ value, onChange, serverError, hosts = DEFAULT
   serverError?: string | null
   hosts?: typeof DEFAULT_MEETING_HOSTS
 }) {
+  const t = useT()
   const local = value.trim() ? recognise(value.trim(), hosts) : null
   const error = serverError ?? (value.trim() ? meetingUrlError(value) : null)
   const names = hosts.map((h) => h.name)
-  const listed = names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1]
+  const listed = names.slice(0, -1).join(', ') + t('meetingLink.and') + names[names.length - 1]
 
   return (
     <Field
-      label="Meeting link"
+      label={t('meetingLink.label')}
       error={error}
-      ok={!error && local?.ok ? 'Recognised as ' + local.name + '.' : undefined}
-      hint={
-        <>
-          Use an HTTPS meeting link of up to {MEETING_URL_MAX_LENGTH} characters, for example from {listed}. Other providers may also be supported.
-        </>
-      }
+      ok={!error && local?.ok ? t('meetingLink.recognisedAs', { name: local.name }) : undefined}
+      hint={t('meetingLink.hint', { max: MEETING_URL_MAX_LENGTH, listed })}
     >
       {(id, invalid) => (
         <Input

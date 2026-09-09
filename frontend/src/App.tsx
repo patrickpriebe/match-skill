@@ -16,11 +16,13 @@ import { HistoryPage } from '@/pages/HistoryPage'
 import { FeedbackPage } from '@/pages/FeedbackPage'
 import { AvailabilityPage } from '@/pages/AvailabilityPage'
 import { PrivacyPage } from '@/pages/PrivacyPage'
+import { useT } from '@/i18n/I18nContext'
 
 function Shell() {
+  const t = useT()
   const { user, logout } = useAuth()
   const location = useLocation()
-  return <AppShell user={user} mobileAction={<Button variant="quiet" size="sm" onClick={logout}>Sign out</Button>}>
+  return <AppShell user={user} mobileAction={<Button variant="quiet" size="sm" onClick={logout}>{t('common.signOut')}</Button>}>
     <Outlet key={location.pathname} />
   </AppShell>
 }

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { UserCard } from './UserCard'
 import { TradeLedger } from './TradeLedger'
 import { Button } from '../ui/Button'
+import { useT } from '@/i18n/I18nContext'
 import type { Match } from '@/lib/api/types'
 
 import type { MatchDirections } from './match-helpers'
@@ -21,6 +22,7 @@ export function MatchCard({ match, directions, note, onRequest, requesting }: {
   onRequest?: (match: Match) => void
   requesting?: boolean
 }) {
+  const t = useT()
   const mutual = match.strength === 'MUTUAL'
   const { user } = match
   const first = user.displayName.split(' ')[0]
@@ -39,13 +41,13 @@ export function MatchCard({ match, directions, note, onRequest, requesting }: {
         variant={mutual ? 'full' : 'half'}
         sides={[
           {
-            direction: 'You learn',
+            direction: t('matchCard.youLearn'),
             skill: directions.youLearn?.name,
-            from: mutual ? 'from ' + first : undefined,
+            from: mutual ? t('common.from', { name: first }) : undefined,
           },
           directions.theyLearn
-            ? { direction: 'They learn', skill: directions.theyLearn.name, from: 'from you' }
-            : { direction: 'They learn', open: 'open until they accept' },
+            ? { direction: t('matchCard.theyLearn'), skill: directions.theyLearn.name, from: t('common.fromYou') }
+            : { direction: t('matchCard.theyLearn'), open: t('matchCard.openUntilAccept') },
         ]}
       />
 
@@ -59,10 +61,10 @@ export function MatchCard({ match, directions, note, onRequest, requesting }: {
           disabled={!onRequest}
           onClick={() => onRequest?.(match)}
         >
-          Send request
+          {t('matchCard.sendRequest')}
         </Button>
         {(
-          <Link className="btn btn-quiet btn-sm" to={'/profile/' + user.id}>View profile</Link>
+          <Link className="btn btn-quiet btn-sm" to={'/profile/' + user.id}>{t('matchCard.viewProfile')}</Link>
         )}
       </div>
     </article>

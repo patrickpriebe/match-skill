@@ -13,7 +13,8 @@ import type { DraftWindow } from '@/components/design/domain/availability-helper
 import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
-import type { ApiError } from '@/lib/api/types'
+import { useT } from '@/i18n/I18nContext'
+import type { ApiError, DayOfWeek } from '@/lib/api/types'
 
 const ZONES = [
   'America/Sao_Paulo', 'America/New_York', 'Europe/Lisbon', 'Europe/Berlin',
@@ -30,6 +31,8 @@ const ZONES = [
  * to half-finish.
  */
 export function AvailabilityPage() {
+  const t = useT()
+  const dayLabel = (day: DayOfWeek) => t(`daysShort.${day}`)
   const { refreshUser } = useAuth()
   const saved = useAsync(() => api.getMyAvailability(), [])
   const [windows, setWindows] = useState<DraftWindow[] | null>(null)
@@ -47,8 +50,8 @@ export function AvailabilityPage() {
 
   const head = (
     <PageHeader
-      title="Availability"
-      lead="Recurring weekly windows, not specific dates. This narrows matching as well as scheduling: two complementary skill lists that never overlap in time are not a usable match."
+      title={t('availability.title')}
+      lead={t('availability.lead')}
     />
   )
 
@@ -56,7 +59,7 @@ export function AvailabilityPage() {
     return <>{head}<ErrorState error={saved.error} onRetry={saved.reload} /></>
   }
   if (saved.status === 'loading' || windows === null || zone === null) {
-    return <>{head}<LoadingState label="Loading availability"><SkeletonRows count={4} /></LoadingState></>
+    return <>{head}<LoadingState label={t('availability.loadingAvailability')}><SkeletonRows count={4} /></LoadingState></>
   }
 
   const browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -88,9 +91,9 @@ export function AvailabilityPage() {
         <div>
           <section className="block" style={{ marginBottom: 'var(--gap-lg)' }}>
             <Field
-              label="Your time zone"
+              label={t('availability.yourTimeZone')}
               className="tz-field"
-              hint="Every window below is stored in this zone. Change it and the times keep their numbers — they do not shift."
+              hint={t('availability.timeZoneHint')}
             >
               {(id) => (
                 <Select id={id} disabled={busy} value={zone} onChange={(e) => { setZone(e.target.value); setSavedMessage(false) }}>
@@ -104,58 +107,56 @@ export function AvailabilityPage() {
             <Rule />
             {windows.length === 0 ? (
               <EmptyState
-                title="Your week is empty"
+                title={t('availability.emptyTitle')}
                 actions={
                   <Button
                     variant="primary"
                     size="sm"
                     onClick={() => setWindows([{ dayOfWeek: 'TUESDAY', startTime: '18:00', endTime: '20:00' }])}
                   >
-                    Add your first window
+                    {t('availability.addFirstWindow')}
                   </Button>
                 }
               >
-                Availability narrows matching as well as scheduling. With nothing here you still
-                appear in results, but every conversation starts by asking when you are free.
+                {t('availability.emptyBody')}
               </EmptyState>
             ) : (
               <fieldset disabled={busy} style={{ padding: 0, margin: 0, border: 0 }}><legend className="sr-only">Weekly windows</legend><AvailabilitySelector windows={windows} onChange={(next) => { setWindows(next); setSavedMessage(false) }} /></fieldset>
             )}
           </section>
 
-          {overlap && <Notice tone="stop">Windows on the same day must not overlap.</Notice>}
-          {savedMessage && <Notice>Availability saved.</Notice>}
+          {overlap && <Notice tone="stop">{t('availability.overlapError')}</Notice>}
+          {savedMessage && <Notice>{t('availability.saved')}</Notice>}
           {error && <Notice tone="stop" className="aside-note">{error}</Notice>}
 
           <div className="save-bar row-between">
-            <span className="meta">{windows.length} windows · {hours}h per week</span>
+            <span className="meta">{t('availability.windowsPerWeek', { count: windows.length, hours })}</span>
             <div className="row" style={{ gap: 10 }}>
-              <Button variant="quiet" size="sm" disabled={busy} onClick={() => { setWindows(null); setSavedMessage(false) }}>Discard changes</Button>
+              <Button variant="quiet" size="sm" disabled={busy} onClick={() => { setWindows(null); setSavedMessage(false) }}>{t('availability.discardChanges')}</Button>
               <Button variant="primary" size="sm" loading={busy} disabled={!valid} onClick={() => void save()}>
-                Save availability
+                {t('availability.save')}
               </Button>
             </div>
           </div>
           <p className="small dim" style={{ marginTop: 10, maxWidth: '60ch' }}>
-            Saving replaces the whole week at once, so nothing is written until you press it —
-            there is no partial autosave to half-finish.
+            {t('availability.saveNote')}
           </p>
         </div>
 
         <aside>
-          <Panel title="Week at a glance" aside={<span className="meta">your zone</span>}>
+          <Panel title={t('availability.weekAtAGlance')} aside={<span className="meta">{t('availability.yourZone')}</span>}>
             <div className="only-d">
               <AvailabilityPreview windows={windows} />
             </div>
             <p className="small" style={{ marginTop: 14 }}>
-              <b>In words:</b> {windows.length ? summarise(windows) : 'nothing set'}.
+              <b>{t('profile.inWords')}</b> {windows.length ? summarise(windows, dayLabel) : t('availability.nothingSet')}.
             </p>
           </Panel>
 
           <Notice tone={browserZone === zone ? 'neutral' : 'warn'} className="aside-note">
             {browserZone === zone
-              ? <>Your browser reports <b>{browserZone}</b>, which matches what is saved.</>
-              : <>Your browser reports <b>{browserZone}</b>, but <b>{zone}</b> is saved. Change it above if you moved.</>}
+              ? <>{t('availability.browserMatchesPrefix')}<b>{browserZone}</b>{t('availability.browserMatchesSuffix')}</>
+              : <>{t('availability.browserMismatchPrefix')}<b>{browserZone}</b>{t('availability.browserMismatchMiddle')}<b>{zone}</b>{t('availability.browserMismatchSuffix')}</>}
           </Notice>
         </aside>
       </div>

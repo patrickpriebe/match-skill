@@ -1,4 +1,5 @@
 import type { Skill } from '@/lib/api/types'
+import { useT } from '@/i18n/I18nContext'
 
 const cx = (...p: Array<string | false | undefined>) => p.filter(Boolean).join(' ')
 
@@ -17,6 +18,7 @@ export function SkillBadge({ skill, tone = 'offered', onRemove }: {
   tone?: SkillTone
   onRemove?: (skill: Skill) => void
 }) {
+  const t = useT()
   const pending = skill.status === 'PENDING_REVIEW'
 
   return (
@@ -27,12 +29,12 @@ export function SkillBadge({ skill, tone = 'offered', onRemove }: {
         tone === 'reciprocal' && 'chip-recip',
         pending && 'chip-pending',
       )}
-      title={pending ? 'Waiting for review — it will not match until approved.' : undefined}
+      title={pending ? t('skillBadge.pendingTitle') : undefined}
     >
       {skill.name}
-      {pending && <span className="tail">pending review</span>}
+      {pending && <span className="tail">{t('skillBadge.pendingTail')}</span>}
       {onRemove && (
-        <button type="button" aria-label={'Remove ' + skill.name} onClick={() => onRemove(skill)}>
+        <button type="button" aria-label={t('skillBadge.remove', { name: skill.name })} onClick={() => onRemove(skill)}>
           ×
         </button>
       )}

@@ -3,15 +3,17 @@ import { Notice } from '@/components/design/ui/Surface'
 import { Loader2 } from 'lucide-react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { useT } from '@/i18n/I18nContext'
 
 // Two gates, in order: authenticated at all, then skillsRegistered — a
 // returning user with skillsRegistered:false is bounced to registration
 // before Home, per docs/documentation.md "First-time skill registration".
 export function ProtectedRoute() {
+  const t = useT()
   const { status, user, error, retry } = useAuth()
   const location = useLocation()
 
-  if (error) return <main className="reg"><Notice tone="stop">{error}<Button onClick={retry}>Try again</Button></Notice></main>
+  if (error) return <main className="reg"><Notice tone="stop">{error}<Button onClick={retry}>{t('protectedRoute.tryAgain')}</Button></Notice></main>
 
   if (status === 'loading') {
     return (

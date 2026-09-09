@@ -1,5 +1,6 @@
 import { Avatar } from '../ui/Avatar'
 import { ReputationDisplay } from './ReputationDisplay'
+import { useT } from '@/i18n/I18nContext'
 import type { Reputation } from '@/lib/api/types'
 
 /**
@@ -14,6 +15,7 @@ export function ProfileHeader({ name, bio, timeZone, utcOffset, reputation }: {
   utcOffset?: string
   reputation: Reputation
 }) {
+  const t = useT()
   return (
     <header className="page-head">
       <div className="row" style={{ gap: 16, alignItems: 'flex-start' }}>
@@ -25,7 +27,7 @@ export function ProfileHeader({ name, bio, timeZone, utcOffset, reputation }: {
               reputation={reputation}
               countLabel={
                 reputation.count > 0
-                  ? `${reputation.count} rating${reputation.count === 1 ? '' : 's'} from completed exchanges`
+                  ? t(reputation.count === 1 ? 'reputation.ratingsFromExchangesOne' : 'reputation.ratingsFromExchangesOther', { count: reputation.count })
                   : undefined
               }
             />

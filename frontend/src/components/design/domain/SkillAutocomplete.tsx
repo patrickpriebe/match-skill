@@ -1,5 +1,6 @@
 ﻿import { useEffect, useId, useRef, useState } from 'react'
 import { SkillBadge } from './SkillBadge'
+import { useT } from '@/i18n/I18nContext'
 import type { Skill } from '@/lib/api/types'
 import { ApiError } from '@/lib/api/types'
 
@@ -8,6 +9,7 @@ export function SkillAutocomplete({ value, onChange, onSearch, onSuggest, multip
   onSuggest?: (name: string) => Promise<Skill>; multiple?: boolean; max?: number
   disabled?: boolean; label: string; hint?: React.ReactNode
 }) {
+  const t = useT()
   const id = useId()
   const listId = id + '-list'
   const box = useRef<HTMLDivElement>(null)
@@ -52,10 +54,10 @@ export function SkillAutocomplete({ value, onChange, onSearch, onSuggest, multip
       onChange(multiple ? [...value, skill] : [skill]); setQuery(''); setOpen(false)
     } catch (error) {
       if (error instanceof ApiError && error.code === 'SKILL_IDENTITY_CONFLICT') {
-        setSuggestError('This name conflicts with an existing skill. Your suggestion was not saved. Choose an approved entry, or retry after the vocabulary is reviewed.')
+        setSuggestError(t('autocomplete.identityConflict'))
       } else if (error instanceof ApiError && error.code === 'INVALID_SKILL_NAME') {
-        setSuggestError('Enter a meaningful skill name, such as C or C++. Your suggestion was not saved.')
-      } else setSuggestError(error instanceof Error ? error.message : 'Could not submit the suggestion.')
+        setSuggestError(t('autocomplete.invalidName'))
+      } else setSuggestError(error instanceof Error ? error.message : t('autocomplete.couldNotSubmit'))
     }
     finally { setSuggesting(false) }
   }
@@ -81,19 +83,19 @@ export function SkillAutocomplete({ value, onChange, onSearch, onSuggest, multip
         aria-autocomplete="list" aria-invalid={Boolean(suggestError) || undefined}
         aria-describedby={[hint && id + '-hint', suggestError && id + '-error'].filter(Boolean).join(' ') || undefined}
         aria-activedescendant={open && state === 'ready' && count > cursor ? listId + '-' + cursor : undefined}
-        disabled={blocked} value={query} placeholder="Start typing - pick from the list"
+        disabled={blocked} value={query} placeholder={t('autocomplete.placeholder')}
         onChange={(e) => { setQuery(e.target.value); setResults([]); setState('loading'); setOpen(true); setCursor(0); setSuggestError(null) }}
         onFocus={() => setOpen(true)} onKeyDown={keyDown} />
-      {open && query.trim() && <div className="combo-pop" id={listId} role="listbox" aria-label="Skill suggestions">
+      {open && query.trim() && <div className="combo-pop" id={listId} role="listbox" aria-label={t('autocomplete.suggestions')}>
         {state === 'ready' && visible.map((skill, i) => <button key={skill.id} id={listId + '-' + i} role="option" type="button"
-          tabIndex={-1} aria-selected={cursor === i} className="combo-opt" onMouseDown={(e) => e.preventDefault()} onMouseEnter={() => setCursor(i)} onClick={() => add(skill)}>{skill.name}<span className="kind">approved</span></button>)}
+          tabIndex={-1} aria-selected={cursor === i} className="combo-opt" onMouseDown={(e) => e.preventDefault()} onMouseEnter={() => setCursor(i)} onClick={() => add(skill)}>{skill.name}<span className="kind">{t('autocomplete.approved')}</span></button>)}
         {canSuggest && <button role="option" type="button" tabIndex={-1} id={listId + '-' + visible.length} aria-selected={cursor === visible.length}
-          disabled={suggesting} className="combo-opt combo-suggest" onMouseDown={(e) => e.preventDefault()} onClick={() => void suggest()}>Suggest &ldquo;{query.trim()}&rdquo; for review</button>}
+          disabled={suggesting} className="combo-opt combo-suggest" onMouseDown={(e) => e.preventDefault()} onClick={() => void suggest()}>{t('autocomplete.suggestForReview', { query: query.trim() })}</button>}
       </div>}
     </div>
-    {open && state === 'loading' && <span role="status" className="hint">Searching skills...</span>}
-    {open && state === 'error' && <span role="alert" className="err-text">Cannot reach the skill list. Try typing again; suggestions are unavailable until the list loads.</span>}
-    {open && state === 'ready' && !count && <span role="status" className="hint">{exact ? 'Already selected.' : 'No approved skills found.'}</span>}
+    {open && state === 'loading' && <span role="status" className="hint">{t('autocomplete.searching')}</span>}
+    {open && state === 'error' && <span role="alert" className="err-text">{t('autocomplete.cannotReach')}</span>}
+    {open && state === 'ready' && !count && <span role="status" className="hint">{exact ? t('autocomplete.alreadySelected') : t('autocomplete.noApprovedFound')}</span>}
     {suggestError && <span id={id + '-error'} role="alert" className="err-text">{suggestError}</span>}
     {hint && <span id={id + '-hint'} className="hint">{hint}</span>}
   </div>

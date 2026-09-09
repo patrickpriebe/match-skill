@@ -6,6 +6,7 @@ import { ExchangeStatusBadge, MatchStrengthBadge } from './ExchangeStatusBadge'
 import type { ExchangeView } from '@/lib/api/types'
 
 import { counterpart, isIncoming } from './exchange-helpers'
+import { useT } from '@/i18n/I18nContext'
 
 /**
  * One record row for an exchange: counterpart, what travels, and the actions
@@ -24,6 +25,7 @@ export function ExchangeCard({ exchange, meId, actions, footnote, showStrength =
   showStrength?: boolean
   tense?: 'present' | 'past'
 }) {
+  const t = useT()
   const other = counterpart(exchange, meId)
   const incoming = isIncoming(exchange, meId)
   const terminal = exchange.status === 'DECLINED' || exchange.status === 'CANCELLED'
@@ -32,8 +34,8 @@ export function ExchangeCard({ exchange, meId, actions, footnote, showStrength =
   const theyLearn = incoming ? exchange.skillFromReceiver : exchange.skillFromRequester
   const youLearn = incoming ? exchange.skillFromRequester : exchange.skillFromReceiver
 
-  const youVerb = tense === 'past' ? 'You learned' : 'You learn'
-  const theyVerb = tense === 'past' ? 'They learned' : 'They learn'
+  const youVerb = tense === 'past' ? t('exchangeCard.youLearned') : t('exchangeCard.youLearn')
+  const theyVerb = tense === 'past' ? t('exchangeCard.theyLearned') : t('exchangeCard.theyLearn')
 
   return (
     <div className={terminal ? 'rec-row is-closed' : 'rec-row'}>
@@ -55,18 +57,18 @@ export function ExchangeCard({ exchange, meId, actions, footnote, showStrength =
         style={{ borderTop: 0 }}
         sides={[
           theyLearn
-            ? { direction: theyVerb, skill: theyLearn.name, from: 'from you' }
-            : { direction: theyVerb, open: incoming ? 'you choose when you accept' : 'they choose at acceptance' },
+            ? { direction: theyVerb, skill: theyLearn.name, from: t('common.fromYou') }
+            : { direction: theyVerb, open: incoming ? t('exchangeCard.youChooseOnAccept') : t('exchangeCard.theyChooseOnAccept') },
           youLearn
-            ? { direction: youVerb, skill: youLearn.name, from: 'from ' + other.displayName.split(' ')[0] }
-            : { direction: youVerb, open: 'not settled yet' },
+            ? { direction: youVerb, skill: youLearn.name, from: t('common.from', { name: other.displayName.split(' ')[0] }) }
+            : { direction: youVerb, open: t('exchangeCard.notSettledYet') },
         ]}
       />
 
       <div className="rec-act">
         {actions}
         {footnote && <p className="small dim">{footnote}</p>}
-        {tense === 'past' && <p className="small dim">Last updated <AbsoluteDate iso={exchange.updatedAt} /></p>}
+        {tense === 'past' && <p className="small dim">{t('exchangeCard.lastUpdated')}<AbsoluteDate iso={exchange.updatedAt} /></p>}
       </div>
     </div>
   )

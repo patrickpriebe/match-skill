@@ -1,4 +1,5 @@
 import { IconStar } from '../ui/icons'
+import { useT } from '@/i18n/I18nContext'
 import type { Reputation } from '@/lib/api/types'
 
 /**
@@ -12,14 +13,15 @@ import type { Reputation } from '@/lib/api/types'
  * across separate roots do not survive every renderer, and a star that rounds
  * 4.8 up to five is a lie about someone's record.
  */
-export function ReputationDisplay({ reputation, showStars = true, emptyLabel = 'No ratings yet', countLabel }: {
+export function ReputationDisplay({ reputation, showStars = true, emptyLabel, countLabel }: {
   reputation: Reputation
   showStars?: boolean
   emptyLabel?: string
   countLabel?: string
 }) {
+  const t = useT()
   if (reputation.count === 0) {
-    return <span className="rep-none">{emptyLabel}</span>
+    return <span className="rep-none">{emptyLabel ?? t('reputation.noRatingsYet')}</span>
   }
 
   const full = Math.floor(reputation.average)
@@ -45,7 +47,7 @@ export function ReputationDisplay({ reputation, showStars = true, emptyLabel = '
       )}
       <span className="rep-val">{reputation.average.toFixed(1)}</span>
       <span className="rep-count">
-        {countLabel ?? `${reputation.count} rating${reputation.count === 1 ? '' : 's'}`}
+        {countLabel ?? t(reputation.count === 1 ? 'reputation.rating' : 'reputation.ratings', { count: reputation.count })}
       </span>
     </span>
   )

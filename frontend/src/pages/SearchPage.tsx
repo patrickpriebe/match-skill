@@ -15,6 +15,7 @@ import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
 import { Button } from '@/components/design/ui/Button'
+import { useT } from '@/i18n/I18nContext'
 import type { Match, Skill } from '@/lib/api/types'
 
 /**
@@ -26,6 +27,7 @@ import type { Match, Skill } from '@/lib/api/types'
  * search as well as the feed.
  */
 export function SearchPage() {
+  const t = useT()
   const [page, setPage] = useState(0)
   const [requesting, setRequesting] = useState<Match | null>(null)
   const [skill, setSkill] = useState<Skill[]>([])
@@ -40,12 +42,12 @@ export function SearchPage() {
 
   const query = (
     <SkillAutocomplete
-      label="Skill"
+      label={t('search.skillLabel')}
       multiple={false}
       value={skill}
       onChange={(value) => { setSkill(value); setPage(0) }}
       onSearch={search}
-      hint="Every skill comes from the shared vocabulary — free text finds nothing here."
+      hint={t('search.skillHint')}
     />
   )
 
@@ -56,9 +58,8 @@ export function SearchPage() {
       <>
         <Head />
         <section className="block">{query}</section>
-        <EmptyState title="Search by skill">
-          Start from something already on your wanted list, or type to see what the
-          vocabulary offers.
+        <EmptyState title={t('search.startTitle')}>
+          {t('search.startBody')}
           {mine.status === 'ready' && mine.data.wanted.length > 0 && (
             <span className="chips" style={{ marginTop: 16 }}>
               {mine.data.wanted.map((s) => (
@@ -88,7 +89,7 @@ export function SearchPage() {
       <>
         <Head />
         <section className="block">{query}</section>
-        <LoadingState label="Searching"><SkeletonRows count={3} /></LoadingState>
+        <LoadingState label={t('search.searching')}><SkeletonRows count={3} /></LoadingState>
       </>
     )
   }
@@ -104,20 +105,20 @@ export function SearchPage() {
 
       {results.data.items.length === 0 ? (
         <EmptyState
-          title={'Nobody currently offers ' + active.name}
-          actions={<Button size="sm" onClick={() => setSkill([])}>Search a different skill</Button>}
+          title={t('search.nobodyOffersTitle', { skill: active.name })}
+          actions={<Button size="sm" onClick={() => setSkill([])}>{t('search.searchDifferentSkill')}</Button>}
         >
           {active.status === 'PENDING_REVIEW'
-            ? 'That term is still waiting for review, so it does not participate in matching yet. Approved skills are the only ones the engine can see.'
-            : 'No one on the platform teaches this yet.'}
+            ? t('search.pendingBody')
+            : t('search.noOneTeachesBody')}
         </EmptyState>
       ) : (
         <>
           <Section
-            title="Complete trades"
+            title={t('search.completeTrades')}
             count={mutual.length}
             emphasis
-            note={'Teaches ' + active.name + ', and wants something you teach.'}
+            note={t('search.completeTradesNote', { skill: active.name })}
           >
             <div className="grid-mutual">
               {mutual.map((m) => (
@@ -132,13 +133,13 @@ export function SearchPage() {
           </Section>
 
           <Section
-            title="Partial suggestions"
+            title={t('search.partialSuggestions')}
             count={partial.length}
-            note={'They teach ' + active.name + '. What they would learn from you is decided at acceptance.'}
+            note={t('search.partialSuggestionsNote', { skill: active.name })}
           >
             {partial.map((m) => <PartialRow key={m.user.id} match={m} skill={active} onRequest={() => setRequesting(m)} />)}
             <p className="meta" style={{ marginTop: 'var(--gap-md)' }}>
-              Ordered by reputation, then by how much your weekly availability overlaps.
+              {t('search.orderedByReputation')}
             </p>
           </Section>
           <Pagination {...results.data} onChange={setPage} />
@@ -149,6 +150,7 @@ export function SearchPage() {
 }
 
 function PartialRow({ match, skill, onRequest }: { match: Match; skill: Skill; onRequest: () => void }) {
+  const t = useT()
   const others = match.user.offeredSkills.filter((s) => s.id !== skill.id)
   return (
     <div className="rec-row">
@@ -163,17 +165,17 @@ function PartialRow({ match, skill, onRequest }: { match: Match; skill: Skill; o
         style={{ borderTop: 0 }}
         sides={[
           {
-            direction: 'Teaches',
+            direction: t('profile.teaches'),
             skill: skill.name,
-            from: others.length ? '· also ' + others.map((s) => s.name).join(', ') : undefined,
+            from: others.length ? t('search.alsoLine', { names: others.map((s) => s.name).join(', ') }) : undefined,
           },
-          { direction: 'Wants', open: 'nothing of yours yet' },
+          { direction: t('profile.wantsToLearn'), open: t('search.wantsNothingYet') },
         ]}
       />
       <div className="rec-act">
         <div className="row" style={{ gap: 6 }}>
           <MatchStrengthBadge strength="PARTIAL" />
-          <Button size="sm" onClick={onRequest}>Send request</Button>
+          <Button size="sm" onClick={onRequest}>{t('search.sendRequest')}</Button>
         </div>
       </div>
     </div>
@@ -181,10 +183,11 @@ function PartialRow({ match, skill, onRequest }: { match: Match; skill: Skill; o
 }
 
 function Head() {
+  const t = useT()
   return (
     <PageHeader
-      title="Search"
-      lead="Look up one skill and see who teaches it. Results keep the same two-tier grouping as your matches."
+      title={t('search.title')}
+      lead={t('search.lead')}
     />
   )
 }

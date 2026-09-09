@@ -9,8 +9,10 @@ import { ExchangeCard } from '@/components/design/domain/ExchangeCard'
 import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
+import { useT } from '@/i18n/I18nContext'
 
 export function HistoryPage() {
+  const t = useT()
   const { user } = useAuth()
   const [page, setPage] = useState(0)
   const meId = user?.id ?? ''
@@ -19,18 +21,18 @@ export function HistoryPage() {
     const items = await Promise.all(result.items.map(async (exchange) => ({ exchange, feedback: await api.getExchangeFeedback(exchange.id) })))
     return { ...result, records: items }
   }, [page, meId])
-  const head = <PageHeader title="History" lead="Your record of completed exchanges. Each row shows what you learned and what you taught." />
+  const head = <PageHeader title={t('history.title')} lead={t('history.lead')} />
   if (records.status === 'error') return <>{head}<ErrorState error={records.error} onRetry={records.reload} /></>
-  if (records.status === 'loading') return <>{head}<LoadingState label="Loading history"><SkeletonRows /></LoadingState></>
-  if (!records.data.total) return <>{head}<EmptyState title="Nothing completed yet" actions={<LinkButton to="/invitations">See invitations</LinkButton>}>An exchange appears here after a participant marks the meeting as completed.</EmptyState></>
+  if (records.status === 'loading') return <>{head}<LoadingState label={t('history.loadingHistory')}><SkeletonRows /></LoadingState></>
+  if (!records.data.total) return <>{head}<EmptyState title={t('history.nothingCompletedTitle')} actions={<LinkButton to="/invitations">{t('history.seeInvitations')}</LinkButton>}>{t('history.nothingCompletedBody')}</EmptyState></>
   return <>{head}
     <section className="tally" aria-label="History totals">
-      <div><div className="tally-n">{records.data.total}</div><div className="tally-l">exchanges completed</div></div>
-      <div><div className="tally-n">{records.data.total * 2}</div><div className="tally-l">skills traded in both directions</div></div>
+      <div><div className="tally-n">{records.data.total}</div><div className="tally-l">{t('history.exchangesCompleted')}</div></div>
+      <div><div className="tally-n">{records.data.total * 2}</div><div className="tally-l">{t('history.skillsTraded')}</div></div>
     </section>
     {records.data.records.map(({ exchange, feedback }) => <ExchangeCard key={exchange.id} exchange={exchange} meId={meId} tense="past" showStrength={false}
-      actions={<LinkButton to={'/feedback/' + exchange.id} variant={feedback.mine ? 'secondary' : 'primary'} size="sm">{feedback.mine ? 'View your feedback' : 'Leave feedback'}</LinkButton>}
-      footnote={feedback.mine ? 'Your rating: ' + feedback.mine.rating + ' of 5. ' + (feedback.counterpartSubmitted ? 'Published.' : 'Saved privately; awaiting their rating.') : 'You have not rated this exchange.'} />)}
+      actions={<LinkButton to={'/feedback/' + exchange.id} variant={feedback.mine ? 'secondary' : 'primary'} size="sm">{feedback.mine ? t('history.viewYourFeedback') : t('history.leaveFeedback')}</LinkButton>}
+      footnote={feedback.mine ? t('history.ratingLine', { rating: feedback.mine.rating, status: feedback.counterpartSubmitted ? t('history.published') : t('history.awaitingRating') }) : t('history.notRated')} />)}
     <Pagination {...records.data} onChange={setPage} />
   </>
 }

@@ -15,6 +15,7 @@ import { UserCard } from '@/components/design/domain/UserCard'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
 import { counterpart } from '@/components/design/domain/exchange-helpers'
+import { useT } from '@/i18n/I18nContext'
 import type { ExchangeView } from '@/lib/api/types'
 
 /**
@@ -23,6 +24,7 @@ import type { ExchangeView } from '@/lib/api/types'
  * the API would accept.
  */
 export function ExchangeDetailsPage() {
+  const t = useT()
   const { id = '' } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -31,10 +33,10 @@ export function ExchangeDetailsPage() {
   const exchange = useAsync(() => api.getExchange(id), [id])
 
   if (exchange.status === 'error') {
-    return <ErrorState error={exchange.error} onRetry={exchange.reload} context="We couldn't open that exchange." />
+    return <ErrorState error={exchange.error} onRetry={exchange.reload} context={t('exchange.couldNotOpen')} />
   }
   if (exchange.status === 'loading') {
-    return <LoadingState label="Loading exchange"><SkeletonRows count={4} /></LoadingState>
+    return <LoadingState label={t('exchange.loadingExchange')}><SkeletonRows count={4} /></LoadingState>
   }
 
   const ex = exchange.data
@@ -48,7 +50,7 @@ export function ExchangeDetailsPage() {
   async function act(fn: () => Promise<unknown>) {
     setBusy(true)
     setError(null)
-    try { await fn(); exchange.reload() } catch (err) { setError(err instanceof Error ? err.message : 'The action failed.') } finally { setBusy(false) }
+    try { await fn(); exchange.reload() } catch (err) { setError(err instanceof Error ? err.message : t('exchange.actionFailed')) } finally { setBusy(false) }
   }
 
   return (
@@ -57,7 +59,7 @@ export function ExchangeDetailsPage() {
         detail
         back={
           <Link className="link small dim only-d" to="/invitations" style={{ display: 'inline-block', marginBottom: 12 }}>
-            ← Invitations
+            {t('exchange.backToInvitations')}
           </Link>
         }
         badges={
@@ -66,43 +68,43 @@ export function ExchangeDetailsPage() {
             <MatchStrengthBadge strength={ex.strength} />
           </>
         }
-        title={'Exchange with ' + other.displayName}
-        lead={nextStep(ex, first)}
+        title={t('exchange.withName', { name: other.displayName })}
+        lead={nextStep(ex, first, t)}
       />
 
       <div className="ex-grid">
         <div>
-          <Section title="What travels" emphasis>
+          <Section title={t('exchange.whatTravels')} emphasis>
             <TradeLedger
               style={{ borderTop: 0 }}
               variant={youLearn && theyLearn ? 'full' : 'half'}
               sides={[
                 youLearn
-                  ? { direction: 'You learn', skill: youLearn.name, from: 'from ' + first }
-                  : { direction: 'You learn', open: 'not settled yet' },
+                  ? { direction: t('exchange.youLearn'), skill: youLearn.name, from: t('common.from', { name: first }) }
+                  : { direction: t('exchange.youLearn'), open: t('exchange.notSettledYet') },
                 theyLearn
-                  ? { direction: 'They learn', skill: theyLearn.name, from: 'from you' }
-                  : { direction: 'They learn', open: 'decided at acceptance' },
+                  ? { direction: t('exchange.theyLearn'), skill: theyLearn.name, from: t('common.fromYou') }
+                  : { direction: t('exchange.theyLearn'), open: t('exchange.decidedAtAcceptance') },
               ]}
             />
           </Section>
 
           {ex.scheduledAt && (
-            <Section title="When and where">
+            <Section title={t('exchange.whenAndWhere')}>
               <ZonedTime
                 iso={ex.scheduledAt}
-                mine={{ timeZone: user?.timeZone ?? 'UTC', label: 'You' }}
+                mine={{ timeZone: user?.timeZone ?? 'UTC', label: t('common.you') }}
                 theirs={{ timeZone: other.timeZone ?? user?.timeZone ?? 'UTC', label: first }}
               />
               {ex.meetingUrl && (
                 <Card style={{ marginTop: 14 }}>
                   <div className="row-between wrap" style={{ gap: 12 }}>
                     <div>
-                      <p className="eyebrow" style={{ marginBottom: 4 }}>Meeting link</p>
+                      <p className="eyebrow" style={{ marginBottom: 4 }}>{t('exchange.meetingLink')}</p>
                       <p className="num small">{ex.meetingUrl.replace(/^https:\/\//, '')}</p>
                     </div>
                     <a className="btn btn-primary btn-sm" href={ex.meetingUrl} target="_blank" rel="noreferrer">
-                      <IconExternal /> Open meeting link
+                      <IconExternal /> {t('exchange.openMeetingLink')}
                     </a>
                   </div>
                 </Card>
@@ -111,15 +113,15 @@ export function ExchangeDetailsPage() {
           )}
 
           <Section
-            title="How it got here"
-            note="The request date and latest update are recorded below."
+            title={t('exchange.howItGotHere')}
+            note={t('exchange.howItGotHereNote')}
           >
             <Timeline exchange={ex} />
           </Section>
 
           <Section
-            title="What you can do now"
-            note="The set below is everything this exchange allows in its current state."
+            title={t('exchange.whatYouCanDoNow')}
+            note={t('exchange.whatYouCanDoNowNote')}
           >
             {error && <Notice tone="stop">{error}</Notice>}
             <Actions exchange={ex} busy={busy} act={act} navigate={navigate} />
@@ -127,7 +129,7 @@ export function ExchangeDetailsPage() {
         </div>
 
         <aside>
-          <Panel title="Who you are meeting">
+          <Panel title={t('exchange.whoYouAreMeeting')}>
             <UserCard name={other.displayName} meta={other.timeZone} reputation={other.reputation} />
             <LinkButton
               to={'/profile/' + other.id}
@@ -135,13 +137,12 @@ export function ExchangeDetailsPage() {
               wide
               style={{ marginTop: 16 }}
             >
-              View full profile
+              {t('exchange.viewFullProfile')}
             </LinkButton>
           </Panel>
 
           <Notice className="aside-note">
-            The platform arranges the exchange; it does not host it. Nobody here observes the
-            meeting, which is why completion is something one of you declares.
+            {t('exchange.asideNote')}
           </Notice>
         </aside>
       </div>
@@ -149,21 +150,22 @@ export function ExchangeDetailsPage() {
   )
 }
 
-function nextStep(ex: ExchangeView, first: string): string {
+function nextStep(ex: ExchangeView, first: string, t: (key: string, vars?: Record<string, string | number>) => string): string {
   switch (ex.status) {
-    case 'REQUESTED': return 'Waiting for an answer. Nothing is committed until it is accepted.'
-    case 'ACCEPTED': return 'Both of you agreed. The next step is settling a date and a link.'
-    case 'SCHEDULED': return 'Nothing else is needed from either of you until the session.'
-    case 'COMPLETED': return 'This one happened. Rating it is what feeds ' + first + '’s reputation.'
-    case 'CANCELLED': return 'Called off after acceptance. This state is terminal.'
-    case 'DECLINED': return 'The invitation was refused. This state is terminal.'
+    case 'REQUESTED': return t('exchange.stepRequested')
+    case 'ACCEPTED': return t('exchange.stepAccepted')
+    case 'SCHEDULED': return t('exchange.stepScheduled')
+    case 'COMPLETED': return t('exchange.stepCompleted', { name: first })
+    case 'CANCELLED': return t('exchange.stepCancelled')
+    case 'DECLINED': return t('exchange.stepDeclined')
   }
 }
 
 function Timeline({ exchange }: { exchange: ExchangeView }) {
+  const t = useT()
   return <div className="tl">
-    <div className="tl-row"><span className="tl-dot" aria-hidden="true" /><span className="tl-what">Request created by {exchange.requester.displayName}</span><RelativeTime iso={exchange.createdAt} /></div>
-    <div className="tl-row"><span className="tl-dot" aria-hidden="true" /><span className="tl-what">Latest update: <ExchangeStatusBadge status={exchange.status} /></span><RelativeTime iso={exchange.updatedAt} /></div>
+    <div className="tl-row"><span className="tl-dot" aria-hidden="true" /><span className="tl-what">{t('exchange.requestCreatedBy', { name: exchange.requester.displayName })}</span><RelativeTime iso={exchange.createdAt} /></div>
+    <div className="tl-row"><span className="tl-dot" aria-hidden="true" /><span className="tl-what">{t('exchange.latestUpdate')} <ExchangeStatusBadge status={exchange.status} /></span><RelativeTime iso={exchange.updatedAt} /></div>
   </div>
 }
 
@@ -179,18 +181,19 @@ function Actions({ exchange, busy, act, navigate }: {
   act: (fn: () => Promise<unknown>) => Promise<void>
   navigate: (to: string) => void
 }) {
+  const t = useT()
   const { status, id } = exchange
 
-  if (status === 'REQUESTED') return <LinkButton to="/invitations">Review invitation</LinkButton>
+  if (status === 'REQUESTED') return <LinkButton to="/invitations">{t('exchange.reviewInvitation')}</LinkButton>
 
   if (status === 'DECLINED' || status === 'CANCELLED') {
-    return <p className="small dim">This exchange is closed. Nothing further can happen on it.</p>
+    return <p className="small dim">{t('exchange.closedNote')}</p>
   }
 
   if (status === 'COMPLETED') {
     return (
       <div className="row wrap" style={{ gap: 10 }}>
-        <Button variant="primary" onClick={() => navigate('/feedback/' + id)}>Leave feedback</Button>
+        <Button variant="primary" onClick={() => navigate('/feedback/' + id)}>{t('exchange.leaveFeedback')}</Button>
       </div>
     )
   }
@@ -199,25 +202,23 @@ function Actions({ exchange, busy, act, navigate }: {
     <>
       <div className="row wrap" style={{ gap: 10 }}>
         {status === 'ACCEPTED' && (
-          <LinkButton to={'/scheduled/' + id} variant="primary">Settle a time</LinkButton>
+          <LinkButton to={'/scheduled/' + id} variant="primary">{t('exchange.settleATime')}</LinkButton>
         )}
         {status === 'SCHEDULED' && (
           <Button loading={busy} onClick={() => void act(() => api.completeExchange(id))}>
-            Mark as completed
+            {t('exchange.markCompleted')}
           </Button>
         )}
         <Button variant="stop" disabled={busy} onClick={() => void act(() => api.cancelExchange(id))}>
-          Cancel exchange
+          {t('exchange.cancelExchange')}
         </Button>
-        <Button variant="quiet" disabled aria-disabled="true">Leave feedback</Button>
+        <Button variant="quiet" disabled aria-disabled="true">{t('exchange.leaveFeedback')}</Button>
       </div>
       <p className="small dim" style={{ marginTop: 10, maxWidth: '60ch' }}>
-        Feedback is disabled because the exchange is not completed yet — shown rather than
-        hidden, so the path to it is visible before you get there.
+        {t('exchange.feedbackDisabledNote')}
       </p>
       <Notice tone="warn" className="aside-note">
-        Cancelling is terminal. There is no reschedule step, so a new time means a new request
-        from the start.
+        {t('exchange.cancelWarning')}
       </Notice>
     </>
   )

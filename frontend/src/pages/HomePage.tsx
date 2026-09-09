@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonMatchCard } from '@/components/design/feedback/LoadingState'
 import { LinkButton, Button } from '@/components/design/ui/Button'
+import { useT } from '@/i18n/I18nContext'
 import type { Match } from '@/lib/api/types'
 
 /**
@@ -24,6 +25,7 @@ import type { Match } from '@/lib/api/types'
  * trade gets the solid button.
  */
 export function HomePage() {
+  const t = useT()
   const navigate = useNavigate()
   const [page, setPage] = useState(0)
   const [requesting, setRequesting] = useState<Match | null>(null)
@@ -38,7 +40,7 @@ export function HomePage() {
     return (
       <>
         <Head />
-        <ErrorState error={matches.error} onRetry={matches.reload} context="We couldn't load your matches." />
+        <ErrorState error={matches.error} onRetry={matches.reload} context={t('home.couldNotLoad')} />
       </>
     )
   }
@@ -47,8 +49,8 @@ export function HomePage() {
     return (
       <>
         <Head />
-        <LoadingState label="Loading matches">
-          <Section title="Complete trades" emphasis note="You both already said you want what the other teaches.">
+        <LoadingState label={t('home.loadingMatches')}>
+          <Section title={t('home.completeTrades')} emphasis note={t('home.completeTradesNote')}>
             <div className="grid-mutual">
               <SkeletonMatchCard />
               <SkeletonMatchCard />
@@ -68,16 +70,15 @@ export function HomePage() {
       <>
         <Head total={0} />
         <EmptyState
-          title="Nobody yet teaches what you want to learn"
+          title={t('home.noMatchesTitle')}
           actions={
             <>
-              <LinkButton to="/skills" variant="primary" size="sm">Add more wanted skills</LinkButton>
-              <LinkButton to="/availability" variant="quiet" size="sm">Widen your availability</LinkButton>
+              <LinkButton to="/skills" variant="primary" size="sm">{t('home.addMoreWanted')}</LinkButton>
+              <LinkButton to="/availability" variant="quiet" size="sm">{t('home.widenAvailability')}</LinkButton>
             </>
           }
         >
-          Your wanted skills are rare on the platform right now. Two things change this,
-          and both are yours to pull.
+          {t('home.noMatchesBody')}
         </EmptyState>
       </>
     )
@@ -89,16 +90,14 @@ export function HomePage() {
       {requesting && <RequestExchangeDialog match={requesting} skills={requesting.user.offeredSkills.filter((s) => mine.data.wanted.some((w) => w.id === s.id))} onClose={() => setRequesting(null)} />}
 
       <Section
-        title="Complete trades"
+        title={t('home.completeTrades')}
         count={mutual.length}
         emphasis
-        note="You both already said you want what the other teaches. Nothing is left to negotiate except the time."
+        note={t('home.completeTradesNote')}
       >
         {mutual.length === 0 ? (
-          <EmptyState title="No complete trades yet">
-            A complete trade is when you both already want what the other teaches. Until one
-            appears, the partial suggestions below are the way in — the other person picks what
-            they&rsquo;d learn from you when they accept.
+          <EmptyState title={t('home.completeTradesEmptyTitle')}>
+            {t('home.completeTradesEmptyBody')}
           </EmptyState>
         ) : (
           <div className="grid-mutual">
@@ -115,9 +114,9 @@ export function HomePage() {
       </Section>
 
       <Section
-        title="Partial suggestions"
+        title={t('home.partialSuggestions')}
         count={partial.length}
-        note="They teach something you want, but nothing of yours is on their list yet. Send a request anyway — they pick what they'd like to learn from you when they accept."
+        note={t('home.partialSuggestionsNote')}
       >
         <div className="grid-partial">
           {partial.map((m) => (
@@ -131,9 +130,9 @@ export function HomePage() {
         </div>
 
         <div className="row-between" style={{ marginTop: 'var(--gap-md)' }}>
-          <span className="meta">Partial suggestions on this page: {partial.length}</span>
+          <span className="meta">{t('home.partialSuggestionsOnPage', { count: partial.length })}</span>
           <Button variant="quiet" size="sm" onClick={() => navigate('/search')}>
-            Search for a specific skill
+            {t('home.searchSpecificSkill')}
           </Button>
         </div>
       </Section>
@@ -143,17 +142,17 @@ export function HomePage() {
 }
 
 function Head({ total, mutual }: { total?: number; mutual?: number }) {
+  const t = useT()
+  const lead = total === undefined
+    ? t('home.leadUnknown')
+    : total === 0
+      ? t('home.leadZero')
+      : (total === 1 ? t('home.leadOne') : t('home.leadOther', { total })) +
+        (mutual ? t('home.leadMutualSuffix', { mutual }) : '')
   return (
     <PageHeader
-      title="Matches"
-      lead={
-        total === undefined
-          ? 'People who offer something on your wanted list.'
-          : total === 0
-            ? 'Nobody currently offers anything on your wanted list.'
-            : `${total} ${total === 1 ? 'person offers' : 'people offer'} something on your wanted list.` +
-              (mutual ? ` ${mutual} of them also want something you teach.` : '')
-      }
+      title={t('home.title')}
+      lead={lead}
     />
   )
 }

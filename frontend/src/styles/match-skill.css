@@ -142,6 +142,17 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .side-foot { margin-top: auto; padding: var(--gap-md); border-top: 1px solid var(--border); }
 
+.lang-switch {
+  display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 2px;
+  gap: 2px;
+}
+.lang-switch button {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em;
+  border: 0; background: transparent; color: var(--muted); border-radius: 999px;
+  padding: 4px 9px; cursor: pointer; line-height: 1;
+}
+.lang-switch button.is-active { background: var(--fg); color: var(--bg); }
+
 .mainpane { min-width: 0; }
 .page { max-width: var(--measure); margin-inline: auto; padding: var(--gap-lg) var(--gap-lg) var(--gap-xl); }
 .page-head { margin-bottom: var(--gap-lg); }

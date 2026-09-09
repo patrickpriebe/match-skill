@@ -19,6 +19,8 @@ import { Button } from '@/components/design/ui/Button'
 import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonRows } from '@/components/design/feedback/LoadingState'
+import { useT } from '@/i18n/I18nContext'
+import type { DayOfWeek } from '@/lib/api/types'
 
 /**
  * Where the trust decision happens. Density of proof beats aesthetics: the
@@ -26,6 +28,8 @@ import { LoadingState, SkeletonRows } from '@/components/design/feedback/Loading
  * windows are shown because scheduling across zones is the normal case.
  */
 export function ProfilePage() {
+  const t = useT()
+  const dayLabel = (day: DayOfWeek) => t(`daysShort.${day}`)
   const [requesting, setRequesting] = useState(false)
   const { id = '' } = useParams()
   const { user } = useAuth()
@@ -42,12 +46,12 @@ export function ProfilePage() {
       <ErrorState
         error={profile.error}
         onRetry={profile.reload}
-        context={profile.error.status === 404 ? 'That profile is no longer available.' : undefined}
+        context={profile.error.status === 404 ? t('profile.profileUnavailable') : undefined}
       />
     )
   }
   if (profile.status === 'loading' || mine.status !== 'ready') {
-    return <LoadingState label="Loading profile"><SkeletonRows count={4} /></LoadingState>
+    return <LoadingState label={t('profile.loadingProfile')}><SkeletonRows count={4} /></LoadingState>
   }
 
   const p = profile.data
@@ -63,7 +67,7 @@ export function ProfilePage() {
   return (
     <>
       {requesting && <RequestExchangeDialog match={match} skills={p.offeredSkills.filter((s) => myWanted.has(s.id))} onClose={() => setRequesting(false)} />}
-      {isMe && <div className="row wrap" style={{ gap: 8, marginBottom: 20 }}><LinkButton to="/skills/register">Edit skills</LinkButton><LinkButton to="/availability">Edit availability</LinkButton></div>}
+      {isMe && <div className="row wrap" style={{ gap: 8, marginBottom: 20 }}><LinkButton to="/skills/register">{t('common.editSkills')}</LinkButton><LinkButton to="/availability">{t('common.editAvailability')}</LinkButton></div>}
       <ProfileHeader
         name={p.user.displayName}
         bio={p.user.bio}
@@ -74,60 +78,60 @@ export function ProfilePage() {
       <div className="prof-grid">
         <div>
           {!isMe && youLearn && (
-            <Section title={'Your trade with ' + first} emphasis>
+            <Section title={t('profile.yourTradeWith', { name: first })} emphasis>
               <Card accent>
                 <div className="row-between" style={{ marginBottom: 10 }}>
                   <MatchStrengthBadge strength={strength} />
                   <span className="meta">
-                    {strength === 'MUTUAL' ? 'both sides already declared' : 'one direction covered'}
+                    {strength === 'MUTUAL' ? t('profile.bothSidesDeclared') : t('profile.oneDirectionCovered')}
                   </span>
                 </div>
                 <TradeLedger
                   variant={strength === 'MUTUAL' ? 'full' : 'half'}
                   sides={[
-                    { direction: 'You learn', skill: youLearn.name, from: 'from ' + first },
+                    { direction: t('profile.youLearn'), skill: youLearn.name, from: t('common.from', { name: first }) },
                     theyLearn
-                      ? { direction: 'They learn', skill: theyLearn.name, from: 'from you' }
-                      : { direction: 'They learn', open: 'they pick when they accept' },
+                      ? { direction: t('profile.theyLearn'), skill: theyLearn.name, from: t('common.fromYou') }
+                      : { direction: t('profile.theyLearn'), open: t('profile.theyPickOnAccept') },
                   ]}
                 />
                 <div className="row" style={{ marginTop: 16, gap: 8 }}>
-                  <Button variant={strength === 'MUTUAL' ? 'primary' : 'secondary'} size="sm" onClick={() => setRequesting(true)}>Send request</Button>
+                  <Button variant={strength === 'MUTUAL' ? 'primary' : 'secondary'} size="sm" onClick={() => setRequesting(true)}>{t('profile.sendRequest')}</Button>
                   <span className="small dim">
-                    You pick which skill you want to learn on the next step.
+                    {t('profile.pickOnNextStep')}
                   </span>
                 </div>
               </Card>
             </Section>
           )}
 
-          <Section title="Skills">
+          <Section title={t('profile.skills')}>
             <div className="stack">
               <div>
-                <p className="eyebrow" style={{ marginBottom: 8 }}>Teaches</p>
+                <p className="eyebrow" style={{ marginBottom: 8 }}>{t('profile.teaches')}</p>
                 <SkillBadgeList skills={p.offeredSkills} recipIds={isMe ? undefined : myWanted} />
               </div>
               <div>
-                <p className="eyebrow" style={{ marginBottom: 8 }}>Wants to learn</p>
+                <p className="eyebrow" style={{ marginBottom: 8 }}>{t('profile.wantsToLearn')}</p>
                 <SkillBadgeList skills={p.wantedSkills} tone="wanted" recipIds={isMe ? undefined : myOffered} />
               </div>
               {!isMe && (
-                <p className="small dim">Highlighted skills are the ones that connect to your lists.</p>
+                <p className="small dim">{t('profile.highlightedNote')}</p>
               )}
             </div>
           </Section>
 
           <Section
-            title="Feedback received"
+            title={t('profile.feedbackReceived')}
             count={p.reputation.count}
-            note="Public reputation counts only exchanges with both ratings submitted. Your own saved feedback can appear here while still private."
+            note={t('profile.feedbackNote')}
           >
             {feedback.status === 'loading' && <SkeletonRows count={2} />}
             {feedback.status === 'error' && <ErrorState error={feedback.error} onRetry={feedback.reload} />}
             {feedback.status === 'ready' && (
               feedback.data.length === 0
-                ? <EmptyState title="No ratings yet">
-                    No published ratings are available for {first} yet.
+                ? <EmptyState title={t('profile.noRatingsTitle')}>
+                    {t('profile.noRatingsBody', { name: first })}
                   </EmptyState>
                 : feedback.data.map((f) => <FeedbackCard key={f.id} feedback={f} />)
             )}
@@ -135,25 +139,23 @@ export function ProfilePage() {
         </div>
 
         <aside>
-          <Panel title="Usually free" aside={<span className="meta">{p.timezone}</span>}>
+          <Panel title={t('profile.usuallyFree')} aside={<span className="meta">{p.timezone}</span>}>
             {p.availability.length === 0 ? (
               <p className="small dim">
-                No weekly windows recorded. You can still send a request — settling a time will
-                just take a round trip.
+                {t('profile.noWindowsBody')}
               </p>
             ) : (
               <>
                 <AvailabilityPreview windows={p.availability} />
                 <p className="small" style={{ marginTop: 14 }}>
-                  <b>In words:</b> {summarise(p.availability)}.
+                  <b>{t('profile.inWords')}</b> {summarise(p.availability, dayLabel)}.
                 </p>
               </>
             )}
           </Panel>
 
           <Notice className="aside-note">
-            Availability narrows matching as well as scheduling: two complementary lists that
-            never overlap in time are not a usable match.
+            {t('profile.availabilityNote')}
           </Notice>
         </aside>
       </div>

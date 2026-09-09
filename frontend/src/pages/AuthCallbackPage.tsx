@@ -4,8 +4,10 @@ import { useAuth } from '@/context/AuthContext'
 import { LoadingState } from '@/components/design/feedback/LoadingState'
 import { Notice } from '@/components/design/ui/Surface'
 import { LinkButton } from '@/components/design/ui/Button'
+import { useT } from '@/i18n/I18nContext'
 
 export function AuthCallbackPage() {
+  const t = useT()
   const { acceptToken } = useAuth()
   const navigate = useNavigate()
   const [token] = useState(() => new URLSearchParams(window.location.search).get('token'))
@@ -20,7 +22,7 @@ export function AuthCallbackPage() {
     return () => { cancelled = true }
   }, [token, acceptToken, navigate])
   return <main className="reg">
-    {error ? <Notice tone="stop">Google sign-in could not be completed. <LinkButton to="/login">Return to sign in</LinkButton></Notice>
-      : <LoadingState label="Signing you in" />}
+    {error ? <Notice tone="stop">{t('authCallback.signInFailed')} <LinkButton to="/login">{t('authCallback.returnToSignIn')}</LinkButton></Notice>
+      : <LoadingState label={t('authCallback.signingYouIn')} />}
   </main>
 }
