@@ -470,7 +470,10 @@ ul { margin: 0; padding: 0; list-style: none; }
 .pick.is-picked .dot { border-color: var(--accent); border-width: 5px; }
 
 /* ─── auth screens (no sidebar) ───────────────────────────────────── */
-.auth { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+/* Capped and centered: at full 1fr/1fr on a wide monitor each half centers
+   its own content independently, which reads as dead space in the middle.
+   A max-width keeps both halves close enough to feel like one composition. */
+.auth { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; max-width: 1080px; margin-inline: auto; }
 .auth-aside { background: var(--surface); border-right: 1px solid var(--border); padding: var(--gap-xl) var(--gap-lg); display: flex; flex-direction: column; }
 .auth-main { display: grid; place-items: center; padding: var(--gap-lg); }
 .auth-box { width: 100%; max-width: 372px; }
