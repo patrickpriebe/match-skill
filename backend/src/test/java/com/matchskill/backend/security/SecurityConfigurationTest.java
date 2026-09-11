@@ -84,14 +84,15 @@ class GoogleSecurityConfigurationTest extends SecurityConfigurationSupport {
     }
 
     @Test
-    void shouldHandleGoogleCallbackFailureAsJson() throws Exception {
+    void shouldRedirectGoogleCallbackFailureToFrontend() throws Exception {
+        // The frontend is a separate SPA: a failed exchange must land the browser back
+        // on it (AuthCallbackPage renders "sign-in failed" when no token is present),
+        // never a raw JSON body on this API's own origin.
         mvc.perform(get("/api/auth/google/callback")
                         .contextPath("/api").servletPath("/auth/google/callback")
                         .param("error", "access_denied").param("state", "unknown"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"))
-                .andExpect(header().doesNotExist("Location"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string("Location", "http://localhost:5173/auth/callback"));
     }
 }
 

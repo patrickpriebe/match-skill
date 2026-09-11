@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -38,6 +40,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,6 +65,7 @@ public class SecurityConfig {
             JwtAuthenticationFilter jwtAuthenticationFilter,
             GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler,
             CorsProperties corsProperties,
+            OAuth2Properties oAuth2Properties,
             ObjectMapper objectMapper,
             ObjectProvider<ClientRegistrationRepository> clientRegistrations) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -101,11 +106,13 @@ public class SecurityConfig {
                                                 .authorizationRequestResolver(googleAuthorizationResolver(registrations)))
                                         .redirectionEndpoint(r -> r.baseUri("/auth/google/callback"))
                                         .successHandler(googleOAuth2SuccessHandler)
+                                        // The frontend is a separate SPA: a failure here must land the
+                                        // browser back on it, not on this API's own origin with a raw
+                                        // JSON body. /auth/callback with no token already renders the
+                                        // "sign-in failed, try again" state (see AuthCallbackPage).
                                         .failureHandler((request, response, exception) -> {
-                                            response.setStatus(401);
-                                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                                            objectMapper.writeValue(response.getOutputStream(),
-                                                    new ApiError("UNAUTHORIZED", "Google authentication failed"));
+                                            log.warn("Google OAuth2 sign-in failed", exception);
+                                            response.sendRedirect(oAuth2Properties.successRedirectUri());
                                         }));
         }
         return http.build();
