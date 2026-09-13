@@ -58,7 +58,10 @@ function MobileBar({ action }: { action?: ReactNode }) {
     <div className="mobilebar">
       <div className="mobilebar-inner">
         <BrandLockup to="/matches" />
-        {action}
+        <div className="row" style={{ gap: 10, alignItems: 'center' }}>
+          <LanguageSwitcher />
+          {action}
+        </div>
       </div>
     </div>
   )
