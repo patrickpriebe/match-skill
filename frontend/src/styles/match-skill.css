@@ -172,7 +172,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .block-rule.soft { border-top-color: var(--border); }
 
 .row { display: flex; align-items: center; gap: var(--gap-md); }
-.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md); flex-wrap: wrap; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md); }
 .stack > * + * { margin-top: var(--gap-md); }
 .wrap { flex-wrap: wrap; }
 
@@ -216,7 +216,10 @@ ul { margin: 0; padding: 0; list-style: none; }
 /* A long IANA zone name (e.g. America/Sao_Paulo) as the aside was being
    squeezed by the title next to it, and the page-wide overflow-wrap: anywhere
    safety net then broke it mid-word instead of just dropping it to its own
-   line. Keep it whole; wrap the row instead of the word. */
+   line. Keep it whole, and let this row specifically wrap instead of the
+   word — scoped here rather than on .row-between generally, which would
+   also loosen tighter rows (e.g. the sidebar's brand + language switcher). */
+.panel-head.row-between { flex-wrap: wrap; }
 .panel-head .meta { white-space: nowrap; }
 .panel-body { padding: var(--gap-md); }
 
