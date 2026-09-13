@@ -183,6 +183,11 @@ ul { margin: 0; padding: 0; list-style: none; }
   border-radius: var(--radius); border: 1px solid transparent;
   font-size: 14px; font-weight: 500; letter-spacing: -0.003em;
   transition: background 0.14s ease, border-color 0.14s ease, transform 0.05s ease;
+  /* Never shrink below label width in a tight flex row (e.g. next to a long
+     paragraph): the page-wide overflow-wrap: anywhere safety net was then
+     breaking short labels like "Send request" mid-word. A button losing the
+     fight for space should push its sibling to wrap, not butcher its own text. */
+  flex-shrink: 0; overflow-wrap: normal;
 }
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
