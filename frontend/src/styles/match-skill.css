@@ -172,7 +172,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .block-rule.soft { border-top-color: var(--border); }
 
 .row { display: flex; align-items: center; gap: var(--gap-md); }
-.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md); }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-md); flex-wrap: wrap; }
 .stack > * + * { margin-top: var(--gap-md); }
 .wrap { flex-wrap: wrap; }
 
@@ -213,6 +213,11 @@ ul { margin: 0; padding: 0; list-style: none; }
 .card-quiet { background: var(--raised); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--gap-md); }
 .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
 .panel-head { padding: 14px var(--gap-md); border-bottom: 1px solid var(--border); }
+/* A long IANA zone name (e.g. America/Sao_Paulo) as the aside was being
+   squeezed by the title next to it, and the page-wide overflow-wrap: anywhere
+   safety net then broke it mid-word instead of just dropping it to its own
+   line. Keep it whole; wrap the row instead of the word. */
+.panel-head .meta { white-space: nowrap; }
 .panel-body { padding: var(--gap-md); }
 
 /* ─── identity ────────────────────────────────────────────────────── */

@@ -130,7 +130,7 @@ export function AvailabilityPage() {
           {error && <Notice tone="stop" className="aside-note">{error}</Notice>}
 
           <div className="save-bar row-between">
-            <span className="meta">{t('availability.windowsPerWeek', { count: windows.length, hours })}</span>
+            <span className="meta">{t(windows.length === 1 ? 'availability.windowsPerWeekOne' : 'availability.windowsPerWeekOther', { count: windows.length, hours })}</span>
             <div className="row" style={{ gap: 10 }}>
               <Button variant="quiet" size="sm" disabled={busy} onClick={() => { setWindows(null); setSavedMessage(false) }}>{t('availability.discardChanges')}</Button>
               <Button variant="primary" size="sm" loading={busy} disabled={!valid} onClick={() => void save()}>
