@@ -108,7 +108,10 @@
   .range { grid-template-columns: 1fr 12px 1fr var(--h-md); }
   .rm { min-height: var(--h-md); width: var(--h-md); }
   /* A dialog on a phone is a sheet: full width, anchored to the bottom edge
-     where the thumb already is. */
+     where the thumb already is. `margin-inline: auto` on `.dialog` (desktop's
+     centering rule) beats grid's `stretch` alignment per spec — an auto
+     margin always wins over stretch — so the sheet shrank to its content
+     width and centered instead of filling the screen. It must be cleared. */
   .dialog-overlay { place-items: end stretch; padding: 0; }
-  .dialog-overlay .dialog { max-width: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .dialog-overlay .dialog { max-width: none; margin-inline: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
 }

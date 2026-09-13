@@ -497,16 +497,22 @@ ul { margin: 0; padding: 0; list-style: none; }
   .mobilebar-inner { display: flex; align-items: center; justify-content: space-between; padding: 12px var(--gap-md); }
   .mobilebar .side-brand { padding: 0; font-size: 17px; }
   .tabbar {
-    position: sticky; bottom: 0; z-index: 10; display: grid;
+    /* `fixed`, not `sticky`: sticky only pins once the page's own content is
+       taller than the viewport, so a short page (e.g. Search with no results
+       yet) left it stranded mid-flow with empty space below it. */
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid;
     grid-template-columns: repeat(5, 1fr); background: var(--surface);
     border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .tabbar a {
     min-height: 56px; display: grid; place-items: center; gap: 2px;
     font-size: 11px; color: var(--muted); padding: 8px 4px;
   }
   .tabbar a.is-active { color: var(--fg); font-weight: 600; }
-  .page { padding: var(--gap-md) var(--gap-md) var(--gap-lg); }
+  /* Bottom padding clears the now-fixed tabbar so it never covers the last
+     bit of scrollable content; must match the tabbar's own reserved height. */
+  .page { padding: var(--gap-md) var(--gap-md) calc(var(--gap-lg) + 64px + env(safe-area-inset-bottom)); }
   .grid-mutual, .grid-partial { grid-template-columns: 1fr; }
   .list-grid { grid-template-columns: 1fr; }
   .rec-row, .rec-head { grid-template-columns: 1fr; gap: var(--gap-sm); }
