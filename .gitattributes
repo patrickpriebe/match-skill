@@ -1,0 +1,5 @@
+# Shell scripts must keep LF even on a Windows checkout. `mvnw` and the CI
+# scripts are executed by bash on Linux runners and inside the Docker build;
+# a CRLF line ending there fails as "bad interpreter: /bin/sh^M".
+*.sh text eol=lf
+mvnw text eol=lf
