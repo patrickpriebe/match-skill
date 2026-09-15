@@ -1,0 +1,72 @@
+# =============================================================================
+# Mantém o backend do Render acordado durante uma janela do dia.
+#
+# Por que isto existe
+# -------------------
+# O plano gratuito do Render hiberna o serviço após ~15 minutos sem requisição,
+# e acordar custa tempo real: medido neste projeto, 71 segundos entre a primeira
+# requisição e o primeiro 401. Quem abre o link nesse intervalo vê uma tela
+# parada e conclui que o site está quebrado — foi exatamente o que aconteceu com
+# a primeira pessoa que recebeu o endereço.
+#
+# A conta que define a janela
+# ---------------------------
+# São 750 horas de instância por mês para o workspace INTEIRO, compartilhadas
+# com os outros projetos da mesma conta. Um serviço ligado sete horas por dia dá
+# 7 x 30 = 210 horas, o que deixa folga. Manter 24h seriam 720 horas e não
+# sobraria nada para o resto.
+#
+# Isto é um remendo, e vale dizer o nome: em instância paga o serviço não
+# hiberna e este arquivo não precisa existir.
+# =============================================================================
+
+name: manter acordado
+
+on:
+  schedule:
+    # A cada 10 minutos, das 12h às 18h59 UTC (9h-15h59 em Brasília).
+    # Dez minutos porque a hibernação começa aos quinze — um intervalo maior
+    # deixaria o serviço dormir entre um ping e outro.
+    - cron: '*/10 12-18 * * *'
+  # Para acordar o serviço antes de uma demonstração fora da janela.
+  workflow_dispatch:
+
+# Este job só faz GET em URL pública: não clona o repositório, não lê segredo,
+# não escreve nada. Declarar aqui prende o privilégio ao que o job precisa, em
+# vez de herdar o padrão do painel — que alguém pode elevar amanhã, em silêncio.
+permissions:
+  contents: read
+
+# Duas execuções simultâneas não fazem sentido: a segunda acordaria o que a
+# primeira já acordou.
+concurrency:
+  group: keep-awake
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    name: acordar o backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar o backend
+        run: |
+          # Rota autenticada de propósito: o 401 vem do filtro de segurança,
+          # antes de qualquer controller ou consulta ao banco. É a prova de vida
+          # mais barata que existe aqui — acorda o processo sem tocar em dado.
+          url="https://match-skill.onrender.com/api/skills?query=a"
+
+          # --max-time generoso de proposito: o cold start medido foi de 71s, e
+          # desistir antes disso deixaria o servico dormindo justamente quando o
+          # ping deveria te-lo acordado.
+          codigo=$(curl -s -o /dev/null -w '%{http_code}' --max-time 120 "$url" || echo "000")
+
+          # 401 e 200 provam a mesma coisa: o Spring esta de pe e respondendo.
+          case "$codigo" in
+            200|401) echo "ok       backend respondeu $codigo" ;;
+            *)
+              # Sem falhar o job: o servico fora do ar por um instante nao deve
+              # encher o repositorio de execucao vermelha. O aviso fica no log
+              # para quem for investigar.
+              echo "::warning::backend respondeu $codigo"
+              ;;
+          esac

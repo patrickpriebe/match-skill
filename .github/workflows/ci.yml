@@ -1,45 +1,121 @@
 name: CI
 
+# Roda em push na main e em qualquer pull request. Não roda em tag ou agendado:
+# este pipeline responde a uma pergunta só — "esse commit quebrou algo?".
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+
+# Um push novo cancela o build anterior do mesmo branch. Não faz sentido gastar
+# runner testando um commit que já foi substituído.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   backend:
-    name: Backend build & test
+    name: backend
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+
+      - name: JDK 21
+        uses: actions/setup-java@v4
         with:
+          java-version: '21'
           distribution: temurin
-          java-version: "21"
+          # Cacheia ~/.m2 com chave derivada do pom.
           cache: maven
-      - name: Build and test
-        run: ./mvnw -B clean verify
+
+      - name: Testes e empacotamento
+        # A suíte sobe H2 em memória e trata Redis ausente como indisponível
+        # (fecha o rate limit), então não precisa de service container nenhum.
+        run: ./mvnw -B --no-transfer-progress clean verify
+
+      - name: Publicar relatórios de teste
+        # Sobe mesmo com o build vermelho: é justamente quando o relatório importa.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-backend
+          path: backend/target/surefire-reports/
+          retention-days: 7
 
   frontend:
-    name: Frontend build & test
+    name: frontend
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run test
-      - name: Build (mock env, no hosted secrets needed)
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Testes
+        run: npm run test
+
+      - name: Build
+        # Mesma variável que a Vercel injeta, para o bundle da CI ser o mesmo
+        # artefato do deploy. Nenhum segredo aqui: tudo que é VITE_ vira texto
+        # legível no bundle por definição.
         run: npm run build
         env:
-          VITE_API_BASE_URL: /api
+          VITE_API_BASE_URL: https://match-skill.onrender.com/api
+
+  secrets:
+    name: segredos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # O histórico inteiro: uma chave commitada e "removida" no commit
+          # seguinte continua no repositório, e é justamente essa que precisa ser
+          # rotacionada. Olhar só a árvore atual daria um verde enganoso.
+          fetch-depth: 0
+
+      - name: Varredura de credenciais no historico
+        run: bash .github/scripts/scan-secrets.sh
+
+  image:
+    name: imagem docker
+    runs-on: ubuntu-latest
+    # Só constrói imagem se os testes passaram. Imagem de código quebrado não
+    # deveria nem existir.
+    needs: [backend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build da imagem
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          file: backend/Dockerfile
+          # Não empurra para registry: quem faz o build de produção é o Render,
+          # a partir deste mesmo Dockerfile. O que importa aqui é provar que a
+          # imagem constrói antes de o deploy tentar.
+          push: false
+          tags: match-skill/backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
