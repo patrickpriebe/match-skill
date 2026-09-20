@@ -11,6 +11,7 @@ export const pt: Dict = {
     back: 'Voltar',
     notNow: 'Agora não',
     justNow: 'agora mesmo',
+    wakingUp: 'O servidor hiberna quando ninguém está usando e pode levar até um minuto para acordar. Este é o primeiro carregamento lento, não uma página quebrada.',
     from: 'de {name}',
     fromYou: 'de você',
     you: 'Você',

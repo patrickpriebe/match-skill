@@ -9,6 +9,7 @@ export const en = {
     back: 'Back',
     notNow: 'Not now',
     justNow: 'just now',
+    wakingUp: 'The server sleeps when nobody is using it and can take up to a minute to wake. This is the slow first load, not a broken page.',
     from: 'from {name}',
     fromYou: 'from you',
     you: 'You',

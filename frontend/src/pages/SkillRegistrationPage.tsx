@@ -27,7 +27,7 @@ export function SkillRegistrationPage() {
   const { refreshUser, user, logout } = useAuth()
   const existing = useAsync(() => api.getMySkills(), [])
   // Scarcity reflects what is saved, so it is not refetched while editing.
-  const market = useAsync(() => api.getSkillMarket(), [])
+  const market = useAsync((signal) => api.getSkillMarket(signal), [])
   const [offered, setOffered] = useState<Skill[] | null>(null)
   const [wanted, setWanted] = useState<Skill[] | null>(null)
   const [saving, setSaving] = useState(false)

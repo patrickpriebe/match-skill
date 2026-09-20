@@ -73,8 +73,8 @@ async function authenticate(path: string, body: LoginPayload | RegisterPayload):
  * profile per match used to turn a page of twelve into thirteen round trips
  * against an instance that can take a minute to wake.
  */
-function matchPage(path: string, page: number, skill?: string): Promise<Paginated<Match>> {
-  return request<Paginated<MatchDto>>(path, { query: { page, size: 12, skill } }).then((data) => ({
+function matchPage(path: string, page: number, skill?: string, signal?: AbortSignal): Promise<Paginated<Match>> {
+  return request<Paginated<MatchDto>>(path, { query: { page, size: 12, skill }, signal }).then((data) => ({
     ...data,
     items: data.items.map((m) => ({
       user: {
@@ -110,7 +110,7 @@ export const realApiClient = {
     (await request<Paginated<Skill>>('/skills', { query: { query, page: 0, size: 20 } })).items,
   suggestSkill: (p: SuggestSkillPayload) => request<Skill>('/skills/suggest', { method: 'POST', body: p }),
   getMySkills: async () => mapMySkills(await request<MySkillsDto>('/me/skills')),
-  getSkillMarket: () => request<SkillMarket>('/me/skills/market'),
+  getSkillMarket: (signal?: AbortSignal) => request<SkillMarket>('/me/skills/market', { signal }),
   replaceMySkills: async (p: ReplaceMySkillsPayload) => mapMySkills(await request<MySkillsDto>('/me/skills', {
     method: 'PUT', body: { offeredSkillIds: p.offered, wantedSkillIds: p.wanted },
   })),
@@ -122,7 +122,7 @@ export const realApiClient = {
   replaceMyAvailability: async (p: ReplaceAvailabilityPayload): Promise<void> => {
     await request<AvailabilityWindow[]>('/me/availability', { method: 'PUT', body: { timeZone: p.timezone, windows: p.windows } })
   },
-  getRings: (limit = 3) => request<RingDto[]>('/rings', { query: { limit } }).then((rings) =>
+  getRings: (limit = 3, signal?: AbortSignal) => request<RingDto[]>('/rings', { query: { limit }, signal }).then((rings) =>
     rings.map((ring) => ({
       ...ring,
       members: ring.members.map((m) => ({
@@ -131,8 +131,8 @@ export const realApiClient = {
         teaches: m.teaches, learns: m.learns,
       })),
     }))),
-  getMatches: (page = 0) => matchPage('/matches', page),
-  search: (skill: string, page = 0) => matchPage('/search', page, skill),
+  getMatches: (page = 0, signal?: AbortSignal) => matchPage('/matches', page, undefined, signal),
+  search: (skill: string, page = 0, signal?: AbortSignal) => matchPage('/search', page, skill, signal),
   getProfile: async (id: string) => mapProfile(await request<ProfileDto>(`/users/${encode(id)}`)),
   getExchanges: async (status?: ExchangeStatus, page = 0): Promise<Paginated<ExchangeView>> => {
     const result = await request<Paginated<Exchange>>('/exchanges', { query: { status, page, size: 12 } })

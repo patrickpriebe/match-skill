@@ -30,9 +30,9 @@ export function HomePage() {
   const navigate = useNavigate()
   const [page, setPage] = useState(0)
   const [requesting, setRequesting] = useState<{ match: Match; skills: Skill[] } | null>(null)
-  const matches = useAsync(() => api.getMatches(page), [page])
+  const matches = useAsync((signal) => api.getMatches(page, signal), [page])
   const mine = useAsync(() => api.getMySkills(), [])
-  const rings = useAsync(() => api.getRings(3), [])
+  const rings = useAsync((signal) => api.getRings(3, signal), [])
 
   const request = (match: Match) =>
     setRequesting({

@@ -34,7 +34,7 @@ export function SearchPage() {
   const active = skill[0] ?? null
   const mine = useAsync(() => api.getMySkills(), [])
   const results = useAsync(
-    () => (active ? api.search(active.id, page) : Promise.resolve({ items: [], page: 0, size: 0, total: 0 })),
+    (signal) => (active ? api.search(active.id, page, signal) : Promise.resolve({ items: [], page: 0, size: 0, total: 0 })),
     [active?.id, page],
   )
 

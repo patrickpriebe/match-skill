@@ -572,3 +572,4 @@ ul { margin: 0; padding: 0; list-style: none; }
 /* Icon buttons need to centre their glyph; the text buttons next to them
    do not, so this is scoped to the icon case. */
 .lang-switch button:has(svg) { display: inline-grid; place-items: center; padding: 4px 6px; }
+.wake-note { margin-top: var(--gap-md); max-width: 54ch; }
