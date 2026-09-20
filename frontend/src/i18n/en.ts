@@ -429,6 +429,23 @@ export const en = {
     back: 'Back',
     couldNotSend: 'The request could not be sent.',
   },
+  skillMarket: {
+    title: 'How your skills stand here',
+    youTeach: 'You teach',
+    youWant: 'You want to learn',
+    counts: '{teachers} teach · {learners} want',
+    spotlightOnly:
+      'You are the only person here who teaches {skill}, and {learners} want it. Lead with that one.',
+    spotlightScarce:
+      '{skill} is your scarcest skill here: {teachers} others teach it and {learners} want it.',
+    savedOnly: 'Counts reflect your saved skills, not unsaved edits, and never count you.',
+    tag: {
+      rare: 'only teacher',
+      wanted: 'in demand',
+      crowded: 'well covered',
+      quiet: 'no demand yet',
+    },
+  },
   ring: {
     sectionTitle: 'Trade rings',
     sectionNote:

@@ -5,6 +5,7 @@ import { api } from '@/lib/api'
 import { useAsync } from '../hooks/useAsync'
 import { BrandLockup } from '@/components/design/domain/BrandMark'
 import { SkillAutocomplete } from '@/components/design/domain/SkillAutocomplete'
+import { SkillMarket } from '@/components/design/domain/SkillMarket'
 import { Panel, Notice } from '@/components/design/ui/Surface'
 import { Button } from '@/components/design/ui/Button'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
@@ -24,6 +25,8 @@ export function SkillRegistrationPage() {
   const navigate = useNavigate()
   const { refreshUser, user, logout } = useAuth()
   const existing = useAsync(() => api.getMySkills(), [])
+  // Scarcity reflects what is saved, so it is not refetched while editing.
+  const market = useAsync(() => api.getSkillMarket(), [])
   const [offered, setOffered] = useState<Skill[] | null>(null)
   const [wanted, setWanted] = useState<Skill[] | null>(null)
   const [saving, setSaving] = useState(false)
@@ -107,6 +110,12 @@ export function SkillRegistrationPage() {
           />
         </Panel>
       </div>
+
+      {market.status === 'ready' && (market.data.offered.length > 0 || market.data.wanted.length > 0) && (
+        <Panel title={t('skillMarket.title')} className="reg-note">
+          <SkillMarket market={market.data} />
+        </Panel>
+      )}
 
       <Notice className="reg-note">
         {t('skillRegistration.sameSkillNote')}

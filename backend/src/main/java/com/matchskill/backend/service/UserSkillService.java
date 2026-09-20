@@ -1,6 +1,8 @@
 package com.matchskill.backend.service;
 
 import com.matchskill.backend.dto.skill.MySkillsResponse;
+import com.matchskill.backend.dto.skill.SkillMarketResponse;
+import com.matchskill.backend.dto.skill.SkillResponse;
 import com.matchskill.backend.dto.skill.UserSkillResponse;
 import com.matchskill.backend.entity.Skill;
 import com.matchskill.backend.entity.SkillDirection;
@@ -8,9 +10,11 @@ import com.matchskill.backend.entity.SkillStatus;
 import com.matchskill.backend.entity.User;
 import com.matchskill.backend.entity.UserSkill;
 import com.matchskill.backend.exception.ApiException;
+import com.matchskill.backend.repository.SkillDemand;
 import com.matchskill.backend.repository.SkillRepository;
 import com.matchskill.backend.repository.UserRepository;
 import com.matchskill.backend.repository.UserSkillRepository;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +22,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserSkillService {
+
 
     private final UserSkillRepository userSkillRepository;
     private final SkillRepository skillRepository;
@@ -45,6 +51,51 @@ public class UserSkillService {
         return new MySkillsResponse(
                 offered.stream().map(UserSkillResponse::from).toList(),
                 wanted.stream().map(UserSkillResponse::from).toList());
+    }
+
+    /**
+     * How each of this person's skills stands in the shared vocabulary: how
+     * many other people teach it, and how many want it.
+     *
+     * <p>One grouped query covers both lists and both directions. The counts
+     * exclude the asking user, so "nobody else teaches this" is literally true
+     * rather than off by one.
+     */
+    @Transactional(readOnly = true)
+    public SkillMarketResponse getSkillMarket(UUID userId) {
+        List<Skill> offered = mySkills(userId, SkillDirection.OFFERED);
+        List<Skill> wanted = mySkills(userId, SkillDirection.WANTED);
+        Set<UUID> skillIds =
+                Stream.concat(offered.stream(), wanted.stream()).map(Skill::getId).collect(Collectors.toSet());
+        if (skillIds.isEmpty()) {
+            return new SkillMarketResponse(List.of(), List.of());
+        }
+
+        Map<UUID, Long> teachers = new HashMap<>();
+        Map<UUID, Long> learners = new HashMap<>();
+        for (SkillDemand demand : userSkillRepository.countPeopleBySkillIdIn(skillIds, userId)) {
+            (demand.getDirection() == SkillDirection.OFFERED ? teachers : learners)
+                    .put(demand.getSkillId(), demand.getPeople());
+        }
+
+        return new SkillMarketResponse(
+                standings(offered, teachers, learners), standings(wanted, teachers, learners));
+    }
+
+    private List<SkillMarketResponse.SkillStanding> standings(
+            List<Skill> skills, Map<UUID, Long> teachers, Map<UUID, Long> learners) {
+        return skills.stream()
+                .map(skill -> new SkillMarketResponse.SkillStanding(
+                        SkillResponse.from(skill),
+                        teachers.getOrDefault(skill.getId(), 0L),
+                        learners.getOrDefault(skill.getId(), 0L)))
+                .toList();
+    }
+
+    private List<Skill> mySkills(UUID userId, SkillDirection direction) {
+        return userSkillRepository.findByUserIdAndDirection(userId, direction).stream()
+                .map(UserSkill::getSkill)
+                .toList();
     }
 
     /** Replaces both lists wholesale and completes first-time skill registration. */

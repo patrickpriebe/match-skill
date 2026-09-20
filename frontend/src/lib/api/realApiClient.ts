@@ -4,7 +4,7 @@ import type {
   CreateFeedbackPayload, Exchange, ExchangeFeedback, ExchangeStatus, ExchangeView, Feedback, FeedbackView,
   LoginPayload, Match, MatchStrength, MyAvailability, MySkills, Paginated,
   PublicProfile, RegisterPayload, ReplaceAvailabilityPayload, ReplaceMySkillsPayload,
-  ScheduleExchangePayload, SharedWindow, Skill, SuggestSkillPayload, User,
+  ScheduleExchangePayload, SharedWindow, Skill, SkillMarket, SuggestSkillPayload, User,
 } from './types'
 
 // Explicit Spring response shapes. View models are mapped only at this boundary.
@@ -110,6 +110,7 @@ export const realApiClient = {
     (await request<Paginated<Skill>>('/skills', { query: { query, page: 0, size: 20 } })).items,
   suggestSkill: (p: SuggestSkillPayload) => request<Skill>('/skills/suggest', { method: 'POST', body: p }),
   getMySkills: async () => mapMySkills(await request<MySkillsDto>('/me/skills')),
+  getSkillMarket: () => request<SkillMarket>('/me/skills/market'),
   replaceMySkills: async (p: ReplaceMySkillsPayload) => mapMySkills(await request<MySkillsDto>('/me/skills', {
     method: 'PUT', body: { offeredSkillIds: p.offered, wantedSkillIds: p.wanted },
   })),

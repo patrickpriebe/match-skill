@@ -2,6 +2,7 @@ package com.matchskill.backend.controller;
 
 import com.matchskill.backend.dto.skill.MySkillsResponse;
 import com.matchskill.backend.dto.skill.ReplaceMySkillsRequest;
+import com.matchskill.backend.dto.skill.SkillMarketResponse;
 import com.matchskill.backend.security.CurrentUser;
 import com.matchskill.backend.service.UserSkillService;
 import jakarta.validation.Valid;
@@ -29,6 +30,17 @@ public class MySkillsController {
     @GetMapping
     public MySkillsResponse getMySkills(Authentication authentication) {
         return userSkillService.getMySkills(CurrentUser.id(authentication));
+    }
+
+    /**
+     * Scarcity, not a second copy of the list: how many other people teach and
+     * want each of these skills. Separate from GET /me/skills because it is a
+     * grouped count over the whole vocabulary, and the skill editor needs the
+     * lists to render long before it needs the numbers.
+     */
+    @GetMapping("/market")
+    public SkillMarketResponse getSkillMarket(Authentication authentication) {
+        return userSkillService.getSkillMarket(CurrentUser.id(authentication));
     }
 
     @PutMapping

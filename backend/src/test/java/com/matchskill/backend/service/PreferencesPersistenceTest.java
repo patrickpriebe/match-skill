@@ -93,6 +93,38 @@ class PreferencesPersistenceTest {
                 .satisfies(saved -> assertThat(saved.startTime()).isEqualTo(LocalTime.of(9, 0)));
     }
 
+    @Test
+    void skillMarketCountsOtherPeopleOnlyAndNeverTheAskingUser() {
+        Skill common = skill(SkillStatus.APPROVED);
+        Skill rare = skill(SkillStatus.APPROVED);
+        User me = user();
+        // I teach both. Two other people teach the common one, and one of them
+        // also wants the rare one.
+        userSkills.replaceMySkills(me.getId(), List.of(common.getId(), rare.getId()), List.of());
+        User other = user();
+        userSkills.replaceMySkills(other.getId(), List.of(common.getId()), List.of(rare.getId()));
+        User third = user();
+        userSkills.replaceMySkills(third.getId(), List.of(common.getId()), List.of());
+
+        var market = userSkills.getSkillMarket(me.getId());
+
+        var commonStanding = market.offered().stream()
+                .filter(s -> s.skill().id().equals(common.getId())).findFirst().orElseThrow();
+        var rareStanding = market.offered().stream()
+                .filter(s -> s.skill().id().equals(rare.getId())).findFirst().orElseThrow();
+        // Two others teach it -- my own row must not be one of the two.
+        assertThat(commonStanding.teachers()).isEqualTo(2);
+        assertThat(commonStanding.learners()).isZero();
+        // "Nobody else teaches this" has to be literally true to be worth saying.
+        assertThat(rareStanding.teachers()).isZero();
+        assertThat(rareStanding.learners()).isEqualTo(1);
+    }
+
+    @Test
+    void skillMarketIsEmptyRatherThanQueryingForNothing() {
+        assertThat(userSkills.getSkillMarket(user().getId()).offered()).isEmpty();
+    }
+
     private User user() {
         return users.saveAndFlush(User.builder().email(UUID.randomUUID() + "@example.test")
                 .displayName("Test user").timeZone("UTC").build());

@@ -203,3 +203,49 @@
   .ring-svg { max-width: 300px; justify-self: center; }
 }
 .ring-list { display: grid; gap: var(--gap-md); }
+
+/* ---------------------------------------------------------------------------
+   Skill market.
+
+   The vocabulary is shared and normalised, so these counts were always
+   available and never shown. Two numbers per skill change what someone does
+   next more than any ranking: the rare skill is the one to lead with.
+--------------------------------------------------------------------------- */
+.mkt { display: grid; gap: 8px; }
+.mkt-lead { margin: 0; font-weight: 600; }
+.mkt-head { margin: 4px 0 0; text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; }
+.mkt-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mkt-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+.mkt-row:last-child { border-bottom: 0; }
+.mkt-name { font-weight: 500; }
+.mkt-counts { white-space: nowrap; overflow-wrap: normal; }
+.mkt-tag {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+/* Only the genuinely scarce skill gets the accent. If three tags compete for
+   attention the signal is gone, and this is the one that changes behaviour. */
+.mkt-rare {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.mkt-wanted { border-color: color-mix(in oklch, var(--accent) 40%, var(--border)); color: var(--fg); }
+
+@media (max-width: 560px) {
+  .mkt-row { grid-template-columns: 1fr auto; }
+  .mkt-counts { grid-column: 1 / -1; }
+}

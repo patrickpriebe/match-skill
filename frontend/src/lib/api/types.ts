@@ -236,3 +236,15 @@ export interface Ring {
   /** The smallest weekly overlap among the consecutive pairs, in minutes. */
   weakestLinkMinutes: number
 }
+
+/** One skill's standing in the shared vocabulary. Counts exclude the viewer. */
+export interface SkillStanding {
+  skill: Skill
+  teachers: number
+  learners: number
+}
+
+export interface SkillMarket {
+  offered: SkillStanding[]
+  wanted: SkillStanding[]
+}

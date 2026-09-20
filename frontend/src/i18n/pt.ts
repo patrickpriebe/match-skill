@@ -431,6 +431,23 @@ export const pt: Dict = {
     back: 'Voltar',
     couldNotSend: 'Não foi possível enviar o pedido.',
   },
+  skillMarket: {
+    title: 'Como suas habilidades estão aqui',
+    youTeach: 'Você ensina',
+    youWant: 'Você quer aprender',
+    counts: '{teachers} ensinam · {learners} querem',
+    spotlightOnly:
+      'Você é a única pessoa aqui que ensina {skill}, e {learners} querem aprender. Comece por essa.',
+    spotlightScarce:
+      '{skill} é sua habilidade mais rara aqui: {teachers} outras pessoas ensinam e {learners} querem aprender.',
+    savedOnly: 'As contagens refletem suas habilidades salvas, não edições pendentes, e nunca incluem você.',
+    tag: {
+      rare: 'única pessoa',
+      wanted: 'procurada',
+      crowded: 'bem coberta',
+      quiet: 'sem procura ainda',
+    },
+  },
   ring: {
     sectionTitle: 'Rodas de troca',
     sectionNote:
