@@ -115,3 +115,48 @@
   .dialog-overlay { place-items: end stretch; padding: 0; }
   .dialog-overlay .dialog { max-width: none; margin-inline: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
 }
+
+/* ---------------------------------------------------------------------------
+   Shared week strip.
+
+   The ranking is decided by how much of the week two people are free at the
+   same time, and until this existed that number never left the server. Seven
+   day columns over a midnight-to-midnight track, with the shared stretches
+   drawn where they fall: the shape of a week reads faster than a list of
+   times, and it is the one view here that no list of cards can substitute.
+--------------------------------------------------------------------------- */
+.shared { display: grid; gap: 6px; }
+.shared-head { margin: 0; font-size: 13px; }
+.shared-none { margin: 0; color: var(--muted); }
+
+.shared-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  align-items: end;
+}
+.shared-day { display: grid; gap: 3px; justify-items: center; }
+.shared-daylabel {
+  font-size: 10px; line-height: 1; color: var(--muted);
+  /* Day initials must not be broken by the page-wide anywhere-wrap. */
+  overflow-wrap: normal; white-space: nowrap;
+}
+.shared-track {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  border-radius: 3px;
+  background: var(--track, color-mix(in oklch, var(--fg) 7%, transparent));
+  overflow: hidden;
+}
+.shared-compact .shared-track { height: 28px; }
+.shared-block {
+  position: absolute;
+  left: 0; right: 0;
+  /* A one-hour window is under two pixels of a 40px day; without a floor the
+     only overlap two people have can render as nothing at all. */
+  min-height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.shared-best { margin: 0; }

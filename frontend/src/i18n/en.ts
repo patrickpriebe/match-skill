@@ -429,6 +429,13 @@ export const en = {
     back: 'Back',
     couldNotSend: 'The request could not be sent.',
   },
+  sharedTime: {
+    total: '{hours}h a week in common',
+    yourClock: 'your clock',
+    longest: 'Longest stretch: {day}, {start} to {end}.',
+    none: 'No hours in common yet.',
+    noneAction: 'Widen your availability',
+  },
   matchCard: {
     youLearn: 'You learn',
     theyLearn: 'They learn',

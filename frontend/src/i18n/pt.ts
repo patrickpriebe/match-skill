@@ -431,6 +431,13 @@ export const pt: Dict = {
     back: 'Voltar',
     couldNotSend: 'Não foi possível enviar o pedido.',
   },
+  sharedTime: {
+    total: '{hours}h por semana em comum',
+    yourClock: 'no seu horário',
+    longest: 'Maior janela: {day}, das {start} às {end}.',
+    none: 'Nenhum horário em comum ainda.',
+    noneAction: 'Ampliar sua disponibilidade',
+  },
   matchCard: {
     youLearn: 'Você aprende',
     theyLearn: 'A pessoa aprende',

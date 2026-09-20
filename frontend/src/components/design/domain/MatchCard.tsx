@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { UserCard } from './UserCard'
 import { TradeLedger } from './TradeLedger'
+import { SharedTime } from './SharedTime'
 import { Button } from '../ui/Button'
 import { useT } from '@/i18n/I18nContext'
 import type { Match } from '@/lib/api/types'
@@ -12,8 +13,9 @@ import type { MatchDirections } from './match-helpers'
  * different presentations: card density, grid size and action weight all
  * change. Only the mutual card gets the solid button.
  *
- * The card shows no time zone, because MatchUser does not carry one (Q12).
- * The absence is honest — it is not filled with a guess.
+ * The shared-week strip is the reason this list is ordered the way it is. The
+ * feed sends it; a card built from a profile page does not have it, and then
+ * the strip is simply absent rather than drawn from a guess.
  */
 export function MatchCard({ match, directions, note, onRequest, requesting }: {
   match: Match
@@ -50,6 +52,14 @@ export function MatchCard({ match, directions, note, onRequest, requesting }: {
             : { direction: t('matchCard.theyLearn'), open: t('matchCard.openUntilAccept') },
         ]}
       />
+
+      {match.sharedWindows && (
+        <SharedTime
+          windows={match.sharedWindows}
+          minutes={match.overlapMinutes ?? 0}
+          compact={!mutual}
+        />
+      )}
 
       {mutual && note && <p className="small dim">{note}</p>}
 
