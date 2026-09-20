@@ -154,16 +154,13 @@ export const realApiClient = {
     return Promise.all(records.map(async (f) => ({ ...f, author: (await resolve(f.authorId)).user })))
   },
   getExchangeFeedback: (id: string) => request<ExchangeFeedback>(`/exchanges/${encode(id)}/feedback`),
-  findOpenExchange: async (otherId: string): Promise<Exchange | null> => {
-    let page = 0
-    while (true) {
-      const result = await request<Paginated<Exchange>>('/exchanges', { query: { page, size: 50 } })
-      const found = result.items.find((e) =>
-        (e.requesterId === otherId || e.receiverId === otherId) &&
-        ['REQUESTED', 'ACCEPTED', 'SCHEDULED'].includes(e.status))
-      if (found) return found
-      if (!result.items.length || (result.page + 1) * result.size >= result.total) return null
-      page += 1
-    }
-  },
+  /**
+   * One request. This used to page through the caller's entire exchange
+   * history fifty rows at a time and filter in JavaScript — an unbounded
+   * number of round trips to learn whether a single row exists. The server
+   * answers 204 when there is none.
+   */
+  findOpenExchange: (otherId: string, signal?: AbortSignal): Promise<Exchange | null> =>
+    request<Exchange | undefined>(`/exchanges/open-with/${encode(otherId)}`, { signal })
+      .then((exchange) => exchange ?? null),
 }

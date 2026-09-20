@@ -15,7 +15,7 @@ export function RequestExchangeDialog({ match, skills, onClose }: {
 }) {
   const t = useT()
   const navigate = useNavigate()
-  const existing = useAsync(() => api.findOpenExchange(match.user.id), [match.user.id])
+  const existing = useAsync((signal) => api.findOpenExchange(match.user.id, signal), [match.user.id])
   const approved = skills.filter((s) => s.status === 'APPROVED')
   const [selected, setSelected] = useState(approved.length === 1 ? approved[0].id : '')
   const [busy, setBusy] = useState(false)

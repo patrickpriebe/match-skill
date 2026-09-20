@@ -57,6 +57,20 @@ public class ExchangeController {
                 exchangeService.list(CurrentUser.id(authentication), status, Pagination.pageRequest(page, size)));
     }
 
+    /**
+     * 200 with the open exchange, or 204 when there is none.
+     *
+     * <p>Exists so the browser stops answering "do we already have something
+     * going?" by downloading the whole history fifty rows at a time.
+     */
+    @GetMapping("/open-with/{userId}")
+    public ResponseEntity<ExchangeResponse> openWith(Authentication authentication, @PathVariable UUID userId) {
+        return exchangeService
+                .findOpenWith(CurrentUser.id(authentication), userId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
     @GetMapping("/{id}")
     public ExchangeResponse get(Authentication authentication, @PathVariable UUID id) {
         return exchangeService.get(CurrentUser.id(authentication), id);

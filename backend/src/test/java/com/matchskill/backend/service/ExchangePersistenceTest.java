@@ -269,6 +269,43 @@ class ExchangePersistenceTest {
         }
     }
 
+    @Test
+    void findsTheOpenExchangeFromEitherSideAndForgetsTheClosedOnes() {
+        ExchangeResponse created = exchangeService.create(requesterId, receiverId, requestedSkillId);
+
+        // Either participant asks the same question and gets the same answer:
+        // the pair is symmetric, and only the direction of the request is not.
+        assertThat(exchangeService.findOpenWith(requesterId, receiverId))
+                .get()
+                .extracting(ExchangeResponse::id)
+                .isEqualTo(created.id());
+        assertThat(exchangeService.findOpenWith(receiverId, requesterId))
+                .get()
+                .extracting(ExchangeResponse::id)
+                .isEqualTo(created.id());
+
+        // Declining closes it. A closed exchange must not block a fresh request,
+        // which is exactly what "open" is there to decide.
+        exchangeService.decline(receiverId, created.id());
+        assertThat(exchangeService.findOpenWith(requesterId, receiverId)).isEmpty();
+
+        ExchangeResponse second = exchangeService.create(requesterId, receiverId, requestedSkillId);
+        assertThat(exchangeService.findOpenWith(requesterId, receiverId))
+                .get()
+                .extracting(ExchangeResponse::id)
+                .isEqualTo(second.id());
+    }
+
+    @Test
+    void findsNothingWithSomeoneWhoHasNoExchangeWithYou() {
+        UUID stranger = new TransactionTemplate(transactionManager)
+                .execute(status -> userRepository.save(user("Stranger")).getId());
+
+        assertThat(exchangeService.findOpenWith(requesterId, stranger)).isEmpty();
+        // Asking about yourself is not a duplicate check, it is a mistake.
+        assertThat(exchangeService.findOpenWith(requesterId, requesterId)).isEmpty();
+    }
+
     private static void await(CountDownLatch latch) {
         try {
             if (!latch.await(5, TimeUnit.SECONDS)) {

@@ -14,6 +14,7 @@ import com.matchskill.backend.repository.UserRepository;
 import com.matchskill.backend.repository.UserSkillRepository;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,6 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class ExchangeService {
+
+    /** The states in which a second exchange with the same person is a duplicate. */
+    private static final List<ExchangeStatus> OPEN_STATUSES =
+            List.of(ExchangeStatus.REQUESTED, ExchangeStatus.ACCEPTED, ExchangeStatus.SCHEDULED);
 
     private final ExchangeRepository exchangeRepository;
     private final UserRepository userRepository;
@@ -96,6 +101,26 @@ public class ExchangeService {
                 pageable.getPageNumber(), pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
         return exchangeRepository.findByParticipant(userId, status, ordered).map(ExchangeResponse::from);
+    }
+
+    /**
+     * The one still-open exchange with this person, if there is one.
+     *
+     * <p>"Open" is REQUESTED, ACCEPTED or SCHEDULED — the states in which
+     * starting a second exchange with the same person would be a duplicate
+     * rather than a new trade. Newest first, because if history ever produced
+     * two the recent one is the live one.
+     */
+    @Transactional(readOnly = true)
+    public Optional<ExchangeResponse> findOpenWith(UUID userId, UUID otherId) {
+        if (userId.equals(otherId)) {
+            return Optional.empty();
+        }
+        return exchangeRepository
+                .findBetweenWithStatusIn(userId, otherId, OPEN_STATUSES, PageRequest.of(0, 1))
+                .stream()
+                .findFirst()
+                .map(ExchangeResponse::from);
     }
 
     @Transactional

@@ -64,11 +64,16 @@ describe('Spring wire contracts', () => {
     expect(fetch).toHaveBeenCalledTimes(1)
     expect(JSON.parse(fetch.mock.calls[0][1].body)).toEqual({ skillFromRequester: 'java' })
   })
-  it('checks later pages for an open exchange', async () => {
-    const fetch = vi.fn().mockResolvedValueOnce(respond({ items: [{ ...exchange, status: 'COMPLETED' }], page: 0, size: 1, total: 2 })).mockResolvedValueOnce(respond({ items: [exchange], page: 1, size: 1, total: 2 }))
+  it('asks the server for an open exchange instead of paging the history', async () => {
+    const fetch = vi.fn().mockResolvedValue(respond(exchange))
     vi.stubGlobal('fetch', fetch)
     expect((await api.findOpenExchange('other'))?.id).toBe('exchange')
-    expect(fetch.mock.calls[1][0]).toContain('page=1')
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch.mock.calls[0][0]).toBe('/api/exchanges/open-with/other')
+  })
+  it('reads 204 as no open exchange rather than as a failure', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 204 })))
+    expect(await api.findOpenExchange('other')).toBeNull()
   })
   it('preserves API error codes and messages', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond({ code: 'EXCHANGE_INVALID_STATUS', message: 'Only accepted exchanges can be scheduled.' }, 409)))
