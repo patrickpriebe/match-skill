@@ -7,13 +7,14 @@ import { useAsync } from '../hooks/useAsync'
 import { Section } from '@/components/design/layout/Section'
 import { PageHeader } from '@/components/design/layout/PageHeader'
 import { MatchCard } from '@/components/design/domain/MatchCard'
+import { RingCard } from '@/components/design/domain/RingCard'
 import { deriveDirections } from '@/components/design/domain/match-helpers'
 import { EmptyState } from '@/components/design/feedback/EmptyState'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
 import { LoadingState, SkeletonMatchCard } from '@/components/design/feedback/LoadingState'
 import { LinkButton, Button } from '@/components/design/ui/Button'
 import { useT } from '@/i18n/I18nContext'
-import type { Match } from '@/lib/api/types'
+import type { Match, Ring, Skill } from '@/lib/api/types'
 
 /**
  * The product's centre. GET /matches already returns MUTUAL first, then
@@ -28,11 +29,40 @@ export function HomePage() {
   const t = useT()
   const navigate = useNavigate()
   const [page, setPage] = useState(0)
-  const [requesting, setRequesting] = useState<Match | null>(null)
+  const [requesting, setRequesting] = useState<{ match: Match; skills: Skill[] } | null>(null)
   const matches = useAsync(() => api.getMatches(page), [page])
   const mine = useAsync(() => api.getMySkills(), [])
+  const rings = useAsync(() => api.getRings(3), [])
 
-  const request = (match: Match) => setRequesting(match)
+  const request = (match: Match) =>
+    setRequesting({
+      match,
+      skills: match.user.offeredSkills.filter((s) => mine.data?.wanted.some((w) => w.id === s.id)),
+    })
+
+  /**
+   * Starting a ring is a request to the person who would teach the viewer —
+   * the only one of the three links the viewer can open themselves. Reusing
+   * the request dialog keeps the duplicate check and the error handling in one
+   * place, so the ring does not grow a second way to create an exchange.
+   */
+  const startRing = (ring: Ring) => {
+    const teacher = ring.members[ring.members.length - 1]
+    setRequesting({
+      match: {
+        user: {
+          id: teacher.userId,
+          displayName: teacher.displayName,
+          timeZone: teacher.timeZone,
+          reputation: teacher.reputation,
+          offeredSkills: [teacher.teaches],
+          wantedSkills: [],
+        },
+        strength: 'PARTIAL',
+      },
+      skills: [teacher.teaches],
+    })
+  }
 
   if (mine.status === 'error') return <><Head /><ErrorState error={mine.error} onRetry={mine.reload} /></>
 
@@ -87,7 +117,28 @@ export function HomePage() {
   return (
     <>
       <Head total={matches.data.total} />
-      {requesting && <RequestExchangeDialog match={requesting} skills={requesting.user.offeredSkills.filter((s) => mine.data.wanted.some((w) => w.id === s.id))} onClose={() => setRequesting(null)} />}
+      {requesting && (
+        <RequestExchangeDialog
+          match={requesting.match}
+          skills={requesting.skills}
+          onClose={() => setRequesting(null)}
+        />
+      )}
+
+      {rings.status === 'ready' && rings.data.length > 0 && (
+        <Section
+          title={t('ring.sectionTitle')}
+          count={rings.data.length}
+          emphasis
+          note={t('ring.sectionNote')}
+        >
+          <div className="ring-list">
+            {rings.data.map((ring) => (
+              <RingCard key={ring.members.map((m) => m.userId).join('-')} ring={ring} onStart={startRing} />
+            ))}
+          </div>
+        </Section>
+      )}
 
       <Section
         title={t('home.completeTrades')}

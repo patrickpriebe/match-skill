@@ -431,6 +431,25 @@ export const pt: Dict = {
     back: 'Voltar',
     couldNotSend: 'Não foi possível enviar o pedido.',
   },
+  ring: {
+    sectionTitle: 'Rodas de troca',
+    sectionNote:
+      'Ninguém aqui quer exatamente o que você ensina. Numa roda ninguém precisa: você ensina uma pessoa, outra ensina você, e a corrente fecha.',
+    you: 'Você',
+    lead: 'Uma troca que nenhuma dupla desta página conseguiria fazer.',
+    youTeach: 'Você ensina {skill} para {name}.',
+    theyTeach: '{name} ensina {skill} para {other}.',
+    closes: '{name} fecha a roda ensinando {skill} para você.',
+    weakestLink: 'Dupla mais apertada da roda: {hours}h por semana em comum.',
+    noSharedWeek: 'Pelo menos uma dupla ainda não publicou os horários.',
+    start: 'Chamar {name}',
+    startNote:
+      'Isso abre o seu lado da roda: um pedido para {name}. Os outros dois elos dependem deles.',
+    loading: 'Procurando rodas',
+    emptyTitle: 'Nenhuma roda fecha ainda',
+    emptyBody:
+      'Uma roda precisa de três pessoas cujas habilidades se encaixem em sequência. Adicionar uma habilidade que você ensina, ou uma que queira aprender, é o que fecha a lacuna.',
+  },
   sharedTime: {
     total: '{hours}h por semana em comum',
     yourClock: 'no seu horário',

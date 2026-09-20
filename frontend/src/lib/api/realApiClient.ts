@@ -19,6 +19,14 @@ export interface MatchDto {
   offeredSkills: Skill[]; wantedSkills: Skill[]
   overlapMinutes: number; sharedWindows: SharedWindow[]
 }
+export interface RingDto {
+  weakestLinkMinutes: number
+  members: Array<{
+    userId: string; displayName: string; timeZone: string
+    reputationAverage: number; reputationCount: number
+    teaches: Skill; learns: Skill
+  }>
+}
 export interface MySkillsDto {
   offered: Array<{ id: string; skill: Skill; direction: string }>
   wanted: Array<{ id: string; skill: Skill; direction: string }>
@@ -113,6 +121,15 @@ export const realApiClient = {
   replaceMyAvailability: async (p: ReplaceAvailabilityPayload): Promise<void> => {
     await request<AvailabilityWindow[]>('/me/availability', { method: 'PUT', body: { timeZone: p.timezone, windows: p.windows } })
   },
+  getRings: (limit = 3) => request<RingDto[]>('/rings', { query: { limit } }).then((rings) =>
+    rings.map((ring) => ({
+      ...ring,
+      members: ring.members.map((m) => ({
+        userId: m.userId, displayName: m.displayName, timeZone: m.timeZone,
+        reputation: { average: m.reputationAverage, count: m.reputationCount },
+        teaches: m.teaches, learns: m.learns,
+      })),
+    }))),
   getMatches: (page = 0) => matchPage('/matches', page),
   search: (skill: string, page = 0) => matchPage('/search', page, skill),
   getProfile: async (id: string) => mapProfile(await request<ProfileDto>(`/users/${encode(id)}`)),

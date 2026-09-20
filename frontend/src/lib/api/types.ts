@@ -215,3 +215,24 @@ export class ApiError extends Error {
 }
 
 export interface ExchangeFeedback { mine: Feedback | null; theirs: Feedback | null; counterpartSubmitted: boolean }
+
+export interface RingMember {
+  userId: string
+  displayName: string
+  timeZone: string
+  reputation: { average: number; count: number }
+  /** Goes to the next member in the list, wrapping at the end. */
+  teaches: Skill
+  /** Comes from the previous member. Always the previous member's `teaches`. */
+  learns: Skill
+}
+
+/**
+ * A closed chain of teaching in which nobody needed a double coincidence of
+ * wants. The viewer is always the first member.
+ */
+export interface Ring {
+  members: RingMember[]
+  /** The smallest weekly overlap among the consecutive pairs, in minutes. */
+  weakestLinkMinutes: number
+}

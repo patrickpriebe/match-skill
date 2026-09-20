@@ -429,6 +429,25 @@ export const en = {
     back: 'Back',
     couldNotSend: 'The request could not be sent.',
   },
+  ring: {
+    sectionTitle: 'Trade rings',
+    sectionNote:
+      'Nobody here wants exactly what you can teach. In a ring nobody has to: you teach one person, a different one teaches you, and the chain closes.',
+    you: 'You',
+    lead: 'A trade that no pair on this page could make.',
+    youTeach: 'You teach {skill} to {name}.',
+    theyTeach: '{name} teaches {skill} to {other}.',
+    closes: '{name} closes the ring by teaching you {skill}.',
+    weakestLink: 'Tightest pair in the ring: {hours}h a week in common.',
+    noSharedWeek: 'At least one pair has not published their hours yet.',
+    start: 'Ask {name}',
+    startNote:
+      'This opens your side of the ring: a request to {name}. The other two links are theirs to accept.',
+    loading: 'Looking for rings',
+    emptyTitle: 'No ring closes yet',
+    emptyBody:
+      'A ring needs three people whose skills line up head to tail. Adding a skill you can teach, or one you want to learn, is what closes the gap.',
+  },
   sharedTime: {
     total: '{hours}h a week in common',
     yourClock: 'your clock',
