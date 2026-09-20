@@ -36,6 +36,12 @@ export const pt: Dict = {
     en: 'English',
     pt: 'Português',
   },
+  theme: {
+    label: 'Tema',
+    light: 'Claro',
+    dark: 'Escuro',
+    system: 'Seguir o dispositivo',
+  },
   login: {
     signIn: 'Entrar',
     createAccount: 'Criar uma conta',

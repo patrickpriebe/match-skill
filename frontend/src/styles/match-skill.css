@@ -9,7 +9,9 @@
 :root {
   --bg:      var(--color-background);
   --surface: var(--color-card);
-  --raised:  oklch(97.2% 0.005 264);
+  /* Derived, not fixed: a hard-coded light value stayed light in the dark
+     theme, which is exactly the bug a dark theme nobody could reach hides. */
+  --raised:  color-mix(in oklch, var(--fg) 4%, var(--bg));
   --fg:      var(--color-foreground);
   --muted:   var(--color-muted-foreground);
   --border:  var(--color-border);
@@ -43,8 +45,8 @@
   --sidebar: 232px;
   --measure: 1080px;
 
-  --radius: 8px;
-  --radius-lg: 14px;
+  --radius: 6px;
+  --radius-lg: 10px;
 
   /* Control height scale. Before this existed the app had five heights for
      the same job (32 / 36 / 40 / 44 / 46). Two is enough. */
@@ -56,6 +58,16 @@
      column sets for the same layout. */
   --rec-a: 220px;
   --rec-c: 190px;
+}
+
+/* The same four meanings, lifted for a dark ground. Ink chosen against paper
+   is unreadable against near-black, and a status nobody can read is worse
+   than no status at all. */
+.dark {
+  --st-wait:  oklch(78% 0.12 75);
+  --st-go:    oklch(74% 0.11 235);
+  --st-done:  oklch(74% 0.12 155);
+  --st-stop:  oklch(72% 0.15 27);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -550,3 +562,13 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 @media (min-width: 921px) { .tabbar, .only-m { display: none; } }
 @media (max-width: 920px) { .only-d { display: none; } }
+
+/* Visible to a screen reader, never on screen. The theme buttons are icons,
+   and an icon with no accessible name is a button that announces nothing. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+/* Icon buttons need to centre their glyph; the text buttons next to them
+   do not, so this is scoped to the icon case. */
+.lang-switch button:has(svg) { display: inline-grid; place-items: center; padding: 4px 6px; }

@@ -34,6 +34,12 @@ export const en = {
     en: 'English',
     pt: 'Português',
   },
+  theme: {
+    label: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'Match my device',
+  },
   login: {
     signIn: 'Sign in',
     createAccount: 'Create an account',

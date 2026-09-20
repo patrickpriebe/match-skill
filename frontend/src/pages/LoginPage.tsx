@@ -9,6 +9,7 @@ import { Field, Input } from '@/components/design/ui/Form'
 import { Notice } from '@/components/design/ui/Surface'
 import { IconGoogle } from '@/components/design/ui/icons'
 import { LanguageSwitcher } from '@/components/design/ui/LanguageSwitcher'
+import { ThemeSwitcher } from '@/components/design/ui/ThemeSwitcher'
 import { useT } from '@/i18n/I18nContext'
 import type { ApiError } from '@/lib/api/types'
 
@@ -56,7 +57,10 @@ export function LoginPage() {
       <aside className="auth-aside">
         <div className="row-between">
           <BrandLockup to="/" />
-          <LanguageSwitcher />
+          <div className="row" style={{ gap: 6 }}>
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+          </div>
         </div>
         <div style={{ margin: 'auto 0', maxWidth: '34ch' }}>
           <p className="eyebrow" style={{ marginBottom: 14 }}>{t('login.eyebrow')}</p>
@@ -81,7 +85,10 @@ export function LoginPage() {
         <div className="auth-box">
           <div className="only-m row-between" style={{ marginBottom: 28 }}>
             <BrandLockup to="/" />
-            <LanguageSwitcher />
+            <div className="row" style={{ gap: 6 }}>
+              <LanguageSwitcher />
+              <ThemeSwitcher />
+            </div>
           </div>
 
           <h1 className="h1 is-detail" style={{ marginBottom: 6 }}>

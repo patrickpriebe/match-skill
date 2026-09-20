@@ -6,6 +6,7 @@ import { useAsync } from '../hooks/useAsync'
 import { BrandLockup } from '@/components/design/domain/BrandMark'
 import { SkillAutocomplete } from '@/components/design/domain/SkillAutocomplete'
 import { SkillMarket } from '@/components/design/domain/SkillMarket'
+import { ThemeSwitcher } from '@/components/design/ui/ThemeSwitcher'
 import { Panel, Notice } from '@/components/design/ui/Surface'
 import { Button } from '@/components/design/ui/Button'
 import { ErrorState } from '@/components/design/feedback/ErrorState'
@@ -69,6 +70,7 @@ export function SkillRegistrationPage() {
           <BrandLockup to="/" />
           <div className="row" style={{ gap: 10 }}>
             <LanguageSwitcher />
+            <ThemeSwitcher />
             <Button variant="quiet" onClick={logout}>{t('skillRegistration.signOut')}</Button>
           </div>
         </div>

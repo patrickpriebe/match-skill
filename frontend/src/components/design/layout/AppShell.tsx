@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom'
 import { BrandLockup } from '../domain/BrandMark'
 import { UserCard } from '../domain/UserCard'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
+import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { useT } from '@/i18n/I18nContext'
 import type { User } from '@/lib/api/types'
 
@@ -31,7 +32,12 @@ function Sidebar({ items, user }: { items: NavItem[]; user: User | null }) {
     <aside className="sidebar">
       <div className="row-between">
         <BrandLockup to="/home" />
-        <LanguageSwitcher />
+        {/* One group, or row-between spreads three items across the sidebar
+            and the brand stops looking like the brand. */}
+        <div className="row" style={{ gap: 6 }}>
+          <LanguageSwitcher />
+          <ThemeSwitcher />
+        </div>
       </div>
       <nav className="side-nav" aria-label={t('nav.main')}>
         {items.map((item) => (
@@ -60,6 +66,7 @@ function MobileBar({ action }: { action?: ReactNode }) {
         <BrandLockup to="/matches" />
         <div className="row" style={{ gap: 10, alignItems: 'center' }}>
           <LanguageSwitcher />
+          <ThemeSwitcher />
           {action}
         </div>
       </div>

@@ -1,37 +1,57 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────
+   Palette.
+
+   This used to be the framework preset: hue 264 everywhere, pure white
+   card on near-white ground. It is a competent palette and it is also the
+   one every other application built on the same starter is wearing, which
+   is a bad place for a product whose whole pitch is that it is not the
+   same as the others.
+
+   The ground is warm paper rather than neutral white, the ink is warm
+   near-black rather than blue-black, and the accent is a mulberry that
+   none of the status colours is near. That last part is a constraint, not
+   a taste: the status scale in match-skill.css already owns amber for
+   waiting, blue for go, green for done and red for stop, and a brand
+   colour sitting on top of any of them would make a button look like a
+   verdict.
+   ───────────────────────────────────────────────────────────────────── */
+
 @theme {
-  --color-background: oklch(99% 0.003 264);
-  --color-foreground: oklch(20% 0.02 264);
+  --color-background: oklch(98.6% 0.006 85);
+  --color-foreground: oklch(23% 0.014 55);
 
-  --color-primary: oklch(52% 0.18 264);
-  --color-primary-foreground: oklch(98% 0.01 264);
+  --color-primary: oklch(47% 0.15 340);
+  --color-primary-foreground: oklch(98% 0.008 340);
 
-  --color-secondary: oklch(95% 0.01 264);
-  --color-secondary-foreground: oklch(20% 0.02 264);
+  --color-secondary: oklch(95% 0.008 85);
+  --color-secondary-foreground: oklch(23% 0.014 55);
 
-  --color-muted: oklch(95% 0.01 264);
-  --color-muted-foreground: oklch(46% 0.02 264);
+  --color-muted: oklch(95% 0.008 85);
+  --color-muted-foreground: oklch(48% 0.014 65);
 
-  --color-accent: oklch(93% 0.03 264);
-  --color-accent-foreground: oklch(20% 0.02 264);
+  --color-accent: oklch(93% 0.02 340);
+  --color-accent-foreground: oklch(23% 0.014 55);
 
-  --color-destructive: oklch(55% 0.22 27);
-  --color-destructive-foreground: oklch(98% 0.01 264);
+  --color-destructive: oklch(53% 0.2 27);
+  --color-destructive-foreground: oklch(98% 0.01 27);
 
-  --color-success: oklch(62% 0.16 152);
-  --color-success-foreground: oklch(98% 0.01 152);
+  --color-success: oklch(58% 0.13 155);
+  --color-success-foreground: oklch(98% 0.01 155);
 
-  --color-border: oklch(90% 0.01 264);
-  --color-input: oklch(90% 0.01 264);
-  --color-ring: oklch(52% 0.18 264);
+  --color-border: oklch(90% 0.009 75);
+  --color-input: oklch(90% 0.009 75);
+  --color-ring: oklch(47% 0.15 340);
 
   --color-card: oklch(100% 0 0);
-  --color-card-foreground: oklch(20% 0.02 264);
+  --color-card-foreground: oklch(23% 0.014 55);
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  /* Tighter than the preset's, which reads as a dashboard. Paper does not
+     have twelve-pixel corners. */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
 
   --animate-fade-in: fade-in 0.15s ease-out;
 
@@ -49,34 +69,39 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Warm in the dark too. A neutral-grey dark theme next to a warm light one
+   reads as two different products. */
 .dark {
-  --color-background: oklch(18% 0.02 264);
-  --color-foreground: oklch(96% 0.01 264);
+  --color-background: oklch(19% 0.012 60);
+  --color-foreground: oklch(95% 0.008 80);
 
-  --color-primary: oklch(75% 0.15 264);
-  --color-primary-foreground: oklch(15% 0.02 264);
+  /* Dusty rather than bright: the light value lifted straight onto a dark
+     ground turns bubblegum, which is a different brand from the one the
+     serif and the paper are setting. */
+  --color-primary: oklch(64% 0.1 340);
+  --color-primary-foreground: oklch(16% 0.012 340);
 
-  --color-secondary: oklch(26% 0.02 264);
-  --color-secondary-foreground: oklch(96% 0.01 264);
+  --color-secondary: oklch(27% 0.012 60);
+  --color-secondary-foreground: oklch(95% 0.008 80);
 
-  --color-muted: oklch(26% 0.02 264);
-  --color-muted-foreground: oklch(68% 0.02 264);
+  --color-muted: oklch(27% 0.012 60);
+  --color-muted-foreground: oklch(70% 0.014 75);
 
-  --color-accent: oklch(30% 0.03 264);
-  --color-accent-foreground: oklch(96% 0.01 264);
+  --color-accent: oklch(30% 0.03 340);
+  --color-accent-foreground: oklch(95% 0.008 80);
 
-  --color-destructive: oklch(60% 0.2 27);
-  --color-destructive-foreground: oklch(98% 0.01 264);
+  --color-destructive: oklch(63% 0.18 27);
+  --color-destructive-foreground: oklch(98% 0.01 27);
 
-  --color-success: oklch(68% 0.16 152);
-  --color-success-foreground: oklch(15% 0.02 152);
+  --color-success: oklch(70% 0.14 155);
+  --color-success-foreground: oklch(17% 0.012 155);
 
-  --color-border: oklch(30% 0.02 264);
-  --color-input: oklch(30% 0.02 264);
-  --color-ring: oklch(75% 0.15 264);
+  --color-border: oklch(31% 0.012 60);
+  --color-input: oklch(31% 0.012 60);
+  --color-ring: oklch(64% 0.1 340);
 
-  --color-card: oklch(22% 0.02 264);
-  --color-card-foreground: oklch(96% 0.01 264);
+  --color-card: oklch(23% 0.012 60);
+  --color-card-foreground: oklch(95% 0.008 80);
 }
 
 @layer base {

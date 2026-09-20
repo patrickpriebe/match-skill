@@ -1,5 +1,6 @@
 import { BrandLockup } from '@/components/design/domain/BrandMark'
 import { LanguageSwitcher } from '@/components/design/ui/LanguageSwitcher'
+import { ThemeSwitcher } from '@/components/design/ui/ThemeSwitcher'
 import { useT } from '@/i18n/I18nContext'
 
 /**
@@ -12,7 +13,10 @@ export function PrivacyPage() {
     <div style={{ maxWidth: '68ch', margin: '0 auto', padding: '48px 24px 96px' }}>
       <div className="row-between" style={{ marginBottom: 32 }}>
         <BrandLockup to="/" />
-        <LanguageSwitcher />
+        <div className="row" style={{ gap: 6 }}>
+          <LanguageSwitcher />
+          <ThemeSwitcher />
+        </div>
       </div>
       <h1 className="h1" style={{ marginBottom: 8 }}>{t('privacy.title')}</h1>
       <p className="small dim" style={{ marginBottom: 32 }}>{t('privacy.lastUpdated')}</p>
