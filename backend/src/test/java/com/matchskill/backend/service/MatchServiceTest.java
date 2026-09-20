@@ -363,6 +363,51 @@ class MatchServiceTest {
         assertThat(response.items()).isEmpty();
     }
 
+    @Test
+    @DisplayName("A match carries the skills, the zone and the shared windows the ranking used")
+    void shouldReturnEverythingACardNeedsWithoutASecondRequest() {
+        UUID meId = UUID.randomUUID();
+        User me = User.builder().id(meId).displayName("Me").timeZone("America/Sao_Paulo").build();
+        when(userRepository.findById(meId)).thenReturn(Optional.of(me));
+
+        Skill java = skill(UUID.randomUUID(), "Java");
+        Skill react = skill(UUID.randomUUID(), "React");
+        when(userSkillRepository.findApprovedByUserIdAndDirection(meId, SkillDirection.OFFERED))
+                .thenReturn(List.of(userSkill(me, java, SkillDirection.OFFERED)));
+        when(userSkillRepository.findApprovedByUserIdAndDirection(meId, SkillDirection.WANTED))
+                .thenReturn(List.of(userSkill(me, react, SkillDirection.WANTED)));
+
+        UUID themId = UUID.randomUUID();
+        User them = User.builder().id(themId).displayName("Them").timeZone("America/Sao_Paulo").build();
+        Set<UUID> candidateIds = Set.of(themId);
+
+        when(userSkillRepository.findApprovedBySkillIdInAndDirection(Set.of(react.getId()), SkillDirection.OFFERED))
+                .thenReturn(List.of(userSkill(them, react, SkillDirection.OFFERED)));
+        when(userSkillRepository.findApprovedByUserIdInAndDirection(candidateIds, SkillDirection.OFFERED))
+                .thenReturn(List.of(userSkill(them, react, SkillDirection.OFFERED)));
+        when(userSkillRepository.findApprovedByUserIdInAndDirection(candidateIds, SkillDirection.WANTED))
+                .thenReturn(List.of(userSkill(them, java, SkillDirection.WANTED)));
+        when(userRepository.findAllById(candidateIds)).thenReturn(List.of(them));
+        when(reputationService.ofBatch(candidateIds)).thenReturn(Map.of(themId, new Reputation(4.5, 2)));
+
+        when(availabilityRepository.findByUserId(meId))
+                .thenReturn(List.of(window(me, DayOfWeek.TUESDAY, 19, 21)));
+        when(availabilityRepository.findByUserIdIn(candidateIds))
+                .thenReturn(List.of(window(them, DayOfWeek.TUESDAY, 20, 22)));
+
+        MatchResponse match = matchService.getMatches(meId, PageRequest.of(0, 10)).items().getFirst();
+
+        assertThat(match.strength()).isEqualTo(ExchangeStrength.MUTUAL);
+        assertThat(match.timeZone()).isEqualTo("America/Sao_Paulo");
+        assertThat(match.offeredSkills()).extracting("name").containsExactly("React");
+        assertThat(match.wantedSkills()).extracting("name").containsExactly("Java");
+        assertThat(match.overlapMinutes()).isEqualTo(60);
+        assertThat(match.sharedWindows()).hasSize(1);
+        assertThat(match.sharedWindows().getFirst().dayOfWeek()).isEqualTo(DayOfWeek.TUESDAY);
+        assertThat(match.sharedWindows().getFirst().startTime()).isEqualTo(LocalTime.of(20, 0));
+        assertThat(match.sharedWindows().getFirst().endTime()).isEqualTo(LocalTime.of(21, 0));
+    }
+
     private Availability window(User user, DayOfWeek day, int startHour, int endHour) {
         return Availability.builder().user(user).dayOfWeek(day)
                 .startTime(LocalTime.of(startHour, 0)).endTime(LocalTime.of(endHour, 0)).build();
