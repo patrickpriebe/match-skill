@@ -8,11 +8,10 @@ export interface MatchDirections {
 }
 
 /**
- * `Match.matchingSkills` is a flat list with no direction, so the client
- * derives which side is which by intersecting it against the viewer's own
- * /me/skills. That derivation lives here and nowhere else. It is open
- * question Q11: the API returning the two sides separately would be cheaper
- * and less fragile.
+ * The API says what the other person offers and wants, not which of those
+ * lines up with the viewer. Intersecting the two lists against the viewer's
+ * own /me/skills is what turns them into the two directions of a trade, and
+ * that derivation lives here and nowhere else.
  */
 export function deriveDirections(match: Match, myOffered: Skill[], myWanted: Skill[]): MatchDirections {
   const myWantedIds = new Set(myWanted.filter((s) => s.status === 'APPROVED').map((s) => s.id))

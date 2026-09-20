@@ -88,10 +88,24 @@ export interface MatchUser {
   timeZone?: string
 }
 
+/**
+ * One stretch during which both people are free, already converted by the
+ * server into the asking user's own zone. `endTime` of '00:00' closes the day
+ * rather than opening the next one.
+ */
+export interface SharedWindow {
+  dayOfWeek: DayOfWeek
+  startTime: string
+  endTime: string
+  minutes: number
+}
+
 export interface Match {
   user: MatchUser
   strength: MatchStrength
-  matchingSkills: Skill[]
+  /** Absent on a match assembled from a profile rather than from the feed. */
+  overlapMinutes?: number
+  sharedWindows?: SharedWindow[]
 }
 
 export type ExchangeStatus =

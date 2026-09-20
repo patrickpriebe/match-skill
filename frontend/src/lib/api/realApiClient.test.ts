@@ -1,12 +1,11 @@
 ﻿import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { realApiClient as api, type ProfileDto } from './realApiClient'
+import { realApiClient as api } from './realApiClient'
 import { setAuthToken } from './http'
 import type { Exchange, Skill, User } from './types'
 
 const react: Skill = { id: 'react', name: 'React', slug: 'react', status: 'APPROVED' }
 const java: Skill = { id: 'java', name: 'Java', slug: 'java', status: 'APPROVED' }
 const me: User = { id: 'me', email: 'me@example.com', displayName: 'Alex', timeZone: 'America/Sao_Paulo', skillsRegistered: true }
-const profile: ProfileDto = { id: 'other', displayName: 'Sam', bio: null, timeZone: 'Asia/Tokyo', skillsOffered: [react], skillsWanted: [java], reputationAverage: 4.5, reputationCount: 2, availability: [] }
 const exchange: Exchange = { id: 'exchange', requesterId: 'me', receiverId: 'other', skillFromReceiver: react, skillFromRequester: java, status: 'REQUESTED', strength: 'MUTUAL', scheduledAt: null, meetingUrl: null, createdAt: '2026-09-01T00:00:00Z', updatedAt: '2026-09-01T00:00:00Z' }
 function respond(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } }) }
 beforeEach(() => { setAuthToken(null) })
@@ -38,13 +37,25 @@ describe('Spring wire contracts', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond({ items: [react], page: 0, size: 20, total: 1 })))
     expect(await api.searchSkills('React')).toEqual([react])
   })
-  it('preserves match pagination, strength, published reputation and profile skills', async () => {
-    const fetch = vi.fn().mockResolvedValueOnce(respond({ items: [{ userId: 'other', displayName: 'Sam', bio: null, strength: 'MUTUAL', reputationAverage: 4.5, reputationCount: 2 }], page: 1, size: 12, total: 13 })).mockResolvedValueOnce(respond(profile))
+  it('reads a whole match page from one request, shared windows included', async () => {
+    const window = { dayOfWeek: 'TUESDAY', startTime: '20:00', endTime: '21:00', minutes: 60 }
+    const fetch = vi.fn().mockResolvedValueOnce(respond({
+      items: [{
+        userId: 'other', displayName: 'Sam', bio: null, timeZone: 'Asia/Tokyo', strength: 'MUTUAL',
+        reputationAverage: 4.5, reputationCount: 2, offeredSkills: [react], wantedSkills: [java],
+        overlapMinutes: 60, sharedWindows: [window],
+      }], page: 1, size: 12, total: 13,
+    }))
     vi.stubGlobal('fetch', fetch)
     const result = await api.getMatches(1)
     expect(fetch.mock.calls[0][0]).toBe('/api/matches?page=1&size=12')
     expect(result.total).toBe(13)
-    expect(result.items[0]).toMatchObject({ strength: 'MUTUAL', user: { offeredSkills: [react], wantedSkills: [java], timeZone: 'Asia/Tokyo', reputation: { average: 4.5, count: 2 } } })
+    expect(result.items[0]).toMatchObject({
+      strength: 'MUTUAL', overlapMinutes: 60, sharedWindows: [window],
+      user: { offeredSkills: [react], wantedSkills: [java], timeZone: 'Asia/Tokyo', reputation: { average: 4.5, count: 2 } },
+    })
+    // The point of the change: a page of matches is one round trip, not one per row.
+    expect(fetch).toHaveBeenCalledTimes(1)
   })
   it('sends a chosen acceptance skill for either strength and does not fetch after mutation', async () => {
     const fetch = vi.fn().mockResolvedValue(respond({ ...exchange, status: 'ACCEPTED' }))

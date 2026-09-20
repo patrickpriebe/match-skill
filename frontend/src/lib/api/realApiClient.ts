@@ -4,7 +4,7 @@ import type {
   CreateFeedbackPayload, Exchange, ExchangeFeedback, ExchangeStatus, ExchangeView, Feedback, FeedbackView,
   LoginPayload, Match, MatchStrength, MyAvailability, MySkills, Paginated,
   PublicProfile, RegisterPayload, ReplaceAvailabilityPayload, ReplaceMySkillsPayload,
-  ScheduleExchangePayload, Skill, SuggestSkillPayload, User,
+  ScheduleExchangePayload, SharedWindow, Skill, SuggestSkillPayload, User,
 } from './types'
 
 // Explicit Spring response shapes. View models are mapped only at this boundary.
@@ -14,8 +14,10 @@ export interface ProfileDto {
   reputationAverage: number; reputationCount: number; availability: AvailabilityWindow[]
 }
 export interface MatchDto {
-  userId: string; displayName: string; bio: string | null; strength: MatchStrength
+  userId: string; displayName: string; bio: string | null; timeZone: string; strength: MatchStrength
   reputationAverage: number; reputationCount: number
+  offeredSkills: Skill[]; wantedSkills: Skill[]
+  overlapMinutes: number; sharedWindows: SharedWindow[]
 }
 export interface MySkillsDto {
   offered: Array<{ id: string; skill: Skill; direction: string }>
@@ -57,19 +59,30 @@ async function authenticate(path: string, body: LoginPayload | RegisterPayload):
     throw error
   }
 }
-async function matchPage(path: string, page: number, skill?: string): Promise<Paginated<Match>> {
-  const data = await request<Paginated<MatchDto>>(path, { query: { page, size: 12, skill } })
-  const resolve = profileResolver()
-  const items = await Promise.all(data.items.map(async (m) => {
-    const p = await resolve(m.userId)
-    return {
-      user: { id: m.userId, displayName: m.displayName, bio: m.bio, timeZone: p.timezone,
+/**
+ * One request per page, not one per row. The server sends the skills, the zone
+ * and the shared windows it already had in hand while ranking; fetching a
+ * profile per match used to turn a page of twelve into thirteen round trips
+ * against an instance that can take a minute to wake.
+ */
+function matchPage(path: string, page: number, skill?: string): Promise<Paginated<Match>> {
+  return request<Paginated<MatchDto>>(path, { query: { page, size: 12, skill } }).then((data) => ({
+    ...data,
+    items: data.items.map((m) => ({
+      user: {
+        id: m.userId,
+        displayName: m.displayName,
+        bio: m.bio,
+        timeZone: m.timeZone,
         reputation: { average: m.reputationAverage, count: m.reputationCount },
-        offeredSkills: p.offeredSkills, wantedSkills: p.wantedSkills },
-      strength: m.strength, matchingSkills: [],
-    }
+        offeredSkills: m.offeredSkills,
+        wantedSkills: m.wantedSkills,
+      },
+      strength: m.strength,
+      overlapMinutes: m.overlapMinutes,
+      sharedWindows: m.sharedWindows,
+    })),
   }))
-  return { ...data, items }
 }
 async function enrichExchange(e: Exchange, resolve = profileResolver()): Promise<ExchangeView> {
   const [requester, receiver] = await Promise.all([resolve(e.requesterId), resolve(e.receiverId)])

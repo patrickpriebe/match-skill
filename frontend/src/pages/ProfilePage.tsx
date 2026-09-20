@@ -63,7 +63,7 @@ export function ProfilePage() {
   const theyLearn = p.wantedSkills.find((s) => s.status === 'APPROVED' && myOffered.has(s.id)) ?? null
   const strength = youLearn && theyLearn ? 'MUTUAL' : 'PARTIAL'
 
-  const match: Match = { user: { id: p.user.id, displayName: p.user.displayName, bio: p.user.bio, offeredSkills: p.offeredSkills, wantedSkills: p.wantedSkills, reputation: p.reputation }, strength, matchingSkills: [] }
+  const match: Match = { user: { id: p.user.id, displayName: p.user.displayName, bio: p.user.bio, offeredSkills: p.offeredSkills, wantedSkills: p.wantedSkills, reputation: p.reputation }, strength }
   return (
     <>
       {requesting && <RequestExchangeDialog match={match} skills={p.offeredSkills.filter((s) => myWanted.has(s.id))} onClose={() => setRequesting(false)} />}
